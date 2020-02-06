@@ -103,10 +103,10 @@ write(paste(V(ga)$label[-mrs][ordr],gal$membership[-mrs][ordr],sep=";"),file=pas
 zcat /data/basemaps/gz/pQnoAdj.map | perl ~/lookup/ghforkCmnt3.perl ~/c2PFullQ | gzip > pQnoAdj.map.a
 zcat pQnoAdj.map.a |  perl -ane 'chop();@x=split(/;/); $res=$x[3]; $res = $x[4] if defined  $x[4]; $res = $x[5] if defined  $x[5]; $res=$x[0] if $res eq ""; print "$x[0];$res;$x[1];$x[2];$x[3];$x[4];$x[5]\n";' | lsort 300G -t\; -k1,1 | gzip > ultimateMap2.s
 
-#zcat ultimateMap2.s | perl -ane 'chop();@x=split(/;/); $res=$x[3]; $res = $x[4] if defined  $x[4]; $res = $x[5] if defined  $x[5]; $res=$x[0] if $res eq ""; print "$x[0];$res;$x[1];$x[2];$x[3];$x[4];$x[5]\n";' | gzip >  ultimateMap2.ss
-
+#produce map for WoC
 zcat ultimateMap2.s | perl -ane 'chop();@x=split(/;/); print "$x[0];$x[1]\n" if $x[0] ne $x[1]' | gzip > /data/basemaps/gz/p2PQ.s
 
+#report various stats
 echo $(zcat ultimateMap2.s|wc -l) "&" $(zcat ultimateMap2.s|cut -d\; -f2 | lsort 10G | uniq -c | lsort 1G -rn > ultimateMap2.cnt; cat ultimateMap2.cnt | wc -l) "&"  $(head -1 ultimateMap2.cnt)
 
 
