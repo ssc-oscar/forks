@@ -1,5 +1,7 @@
 # Detecting git repository forks
 
+The data files associated with this are at https://doi.org/10.5281/zenodo.3653936
+
 We use WoC infrastructure to identify related repositories by commits that 
 are shared among the repositories. Git allows arbitrary number of clones to any repository, so it is 
 not always clear which sets of repositories represent "independently developed" projects.
