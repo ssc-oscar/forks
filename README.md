@@ -1,3 +1,5 @@
+# Zenodo 
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3930178.svg)](https://doi.org/10.5281/zenodo.3930178)
 # Updates for WoC version R
 
 The file p2PR.s is a gzipped semicolon-separated list of repos: 
