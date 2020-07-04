@@ -1,3 +1,32 @@
+# Updates for WoC version R
+
+The file p2PR.s is a gzipped semicolon-separated list of repos: 
+originala repo;deforked repo
+
+The procedure to produce this is greatly simplified:
+	 - convert flat c2pFullR*.s file (containing commit;project  pairs) to file having one line per commit and ignore commits that do not span projects (the output is commit;project1;project2;.. is tored in the result result .p2p files
+	 - order projects in each commit (so the same set of projects will always be represented by the same string): result .p2p.gz files
+	 - count each set of projects in commits only once (multiple commits that reside in the same set of projects are collapsed into one): result .p2p.s files
+	 - (back on one server) merge all 128  .p2p.s files into a single file and remove redundant commits: result c2pFull$ver.p2p.s
+	 - encode multiedges edges in c2pFullR.p2p.s as integers in a bigraph: lineNumber -> each of the repos on that line
+	 - use NetworKit::PLM (Louvain)  on the resulting graph (cluster.c)
+         - use NetworKit::DynKatzCentrality to get cerntrality of each node
+	 - output the result 
+	 - use the repo with the highest centrality as the cluster label (deforeked repo) 
+
+```
+zcat c2pFull$ver.p2p.s1 | perl -e '$pstr="";$nn=0;while(<STDIN>){chop;(@x)=split(/;/);$n=pop @x;$str=join ";", @x; if ($pstr ne $str && $pstr ne ""){ print "$nn;$pstr\n";$pstr=$str;$nn=$n }else{ $pstr=$str;$nn+=$n}};print "$nn;$pstr\n";' | gzip > c2pFull$ver.np2p
+zcat c2pFull$ver.np2p | perl connectExportVw.perl c2pFull$ver.np2p1
+cd ~/src/networkit
+zcat c2pFullR.np2p1.versions| ./cluster 100564768 | gzip > c2pFullR.np2p1.PLMPLP 
+modularity=0.960559 nver=100564768 clusters=9424393 largest=334170
+modularity=0.960559 nver=100564768 clusters=9424393 largest=334170
+zcat c2pFullR.np2p1.PLMPLP|head -100564770 | grep -v '^[BE]' | gzip > c2pFull$ver.np2p1.PLM
+zcat c2pFullR.np2p1.PLM | perl rank.perl c2pFullR.np2p1 | gzip > c2pFullR.np2p1.PLM.crank.map
+zcat  c2pFullR.np2p1.PLM.crank.map | gzip > p2PR.s
+```
+
+
 # Detecting git repository forks
 
 The data files associated with this are at https://doi.org/10.5281/zenodo.3653936

@@ -18,6 +18,9 @@
 
 int main (int argc, char ** argv){
   long int nnodes = atol (argv[1]);
+  int cutAt = -1;
+  if (argc > 2) cutAt = atoi (argv[2]);
+
   NetworKit::Graph g (nnodes, false, false);
   long int fr, to, j = 0;
   while (!feof(stdin)){
@@ -29,6 +32,22 @@ int main (int argc, char ** argv){
   }
   fprintf (stderr, "%li edges read\n", j);
   long int ne = j;
+
+  j = 0;
+  if (cutAt > 0){
+    std::vector<NetworKit::node> ww;
+    g .forNodes ([&] (NetworKit::node u){
+      if (g .degree (u) > cutAt) ww .push_back (u);
+    });
+    for (NetworKit::node k = 0; k < ww .size (); k++)
+      g .forEdgesOf (ww[k], [&](NetworKit::node, NetworKit::node v) { 
+        j++;
+        if (j%100000 == 0) fprintf (stderr, "removing edge %li %li dg0=%li dg1=%li\n", ww[k], v, g .degree (ww[k]), g .degree (v));
+        g .removeEdge (ww[k], v); 
+      });
+  }
+  fprintf (stderr, "%li edges removed\n", j);
+
   NetworKit::DynKatzCentrality c (g, nnodes);
   c. run ();
   fprintf (stderr, "calculated centrality\n");
@@ -69,16 +88,16 @@ int main (int argc, char ** argv){
   }
   fprintf (stderr, "modularity=%lf nver=%li clusters=%li largest=%li\n", quality, p .numberOfElements (), p .numberOfSubsets (), mx);
   std::vector<uint64_t> v = p .getVector ();
-  printf ("BEGIN %li\n", v .size ());
-  for (int i = 0; i < v .size (); i++){
-    printf ("%li;%lf\n", v [i], c.score(i));
-  }
-  printf ("END\n");
+  //printf ("BEGIN %li\n", v .size ());
+  //for (int i = 0; i < v .size (); i++){
+  //  printf ("%li;%lf\n", v [i], c.score(i));
+  //}
+  //printf ("END\n");
   NetworKit::PLP m1 = NetworKit::PLP (g, p);
   m1 .run ();
   NetworKit::Partition p1 = m1 .getPartition ();
   q = NetworKit::Modularity ();
-  quality = q .getQuality (p1, g);
+  double quality1 = q .getQuality (p1, g);
   ss = p1 .subsetSizeMap ();
   iss = ss .begin ();
   mx = 0;
@@ -89,13 +108,13 @@ int main (int argc, char ** argv){
     }
     iss++;
   }
-  fprintf (stderr, "modularity=%lf nver=%li clusters=%li largest=%li\n", quality, p .numberOfElements (), p .numberOfSubsets (), mx);
-  v = p1 .getVector ();
-  printf ("BEGIN %li\n", v .size ());
+  fprintf (stderr, "modularity=%lf nver=%li clusters=%li largest=%li\n", quality1, p .numberOfElements (), p .numberOfSubsets (), mx);
+  std::vector<uint64_t> v1 = p1 .getVector ();
+  //printf ("BEGIN %li\n", v .size ());
   for (int i = 0; i < v .size (); i++){
-    printf ("%li;%lf\n", v [i], c .score(i));
+      printf ("%li;%lf\n", (quality1 > quality ? v1 [i] : v [i]), c .score(i));
   }
-  printf ("END\n");
+  //printf ("END\n");
   //std::cout << m.toString() << "\n";
 }
 
