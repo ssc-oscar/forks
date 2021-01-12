@@ -1,8 +1,6 @@
 use warnings;
 use strict;
 
-my $excludeMr = 0;
-$excludeMr = $ARGV[1] if defined $ARGV[1];
 
 open A, "gunzip -c $ARGV[0].names|";
 my (@num2f);
@@ -46,18 +44,13 @@ while (my ($k, $v) = each %cluster){
 sub output {
 	my $cl = $_[0];
   my %ps;
-  my %ps1;
   for my $p (keys %{$cl}){
-    if ($excludeMr){
-      if ($p !~ /^cl[0-9]+$/){
-        $ps{$p}++;
-      }
-    }else{
+    if ($p =~ /^PRJ_/){
       $ps{$p}++;
     }
   }
 	my @fs = sort { $cl->{$b} <=> $cl->{$a} } (keys %ps);
 	for my $i (0 .. $#fs){
-		print "$fs[$i]\;$fs[0];$cl->{$fs[$i]};$cl->{$fs[0]}\n";
+		print "$fs[$i]\;$fs[0];$cl->{$fs[0]}\n";
 	}
 }	
