@@ -1,5 +1,9 @@
 # Zenodo 
   [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3930178.svg)](https://doi.org/10.5281/zenodo.3930178)
+
+# Audris Mockus, Diomidis Spinellis, Zoe Kotti, and Gabriel John Dusing. A complete set of related git repositories identified via community detection approaches based on shared commits. In IEEE Working Conference on Mining Software Repositories: Data Showcase, May 2020. https://arxiv.org/abs/2002.02707
+
+
 # Updates for WoC version R
 
 The file p2PR.s is a gzipped semicolon-separated list of repos: 
