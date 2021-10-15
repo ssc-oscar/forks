@@ -187,6 +187,1731 @@ zcat diomidis.s |wc
 zcat merged2.s|wc
 8157317
 ```
+#defork
+ver=T
+zcat c2pFull$ver.np2p.s | perl connectExportVw.perl c2pFull$ver.np2p
+zcat c2pFull$ver.np2p.versions | paste  -d\   - <(zcat  c2pFull$ver.np2p.weights) | gzip > c2pFull$ver.np2p.vw
+export LD_LIBRARY_PATH=/home/audris/lib64:/home/audris/lib:/home/audris/src/networkit/build
+zcat c2pFull$ver.np2p.vw| /home/audris/src/networkit/clusterw $(zcat c2pFull$ver.np2p.names|wc -l) $(zcat /data/c2pFull$ver.np2p.vw|wc -l) -1 0 | gzip > c2pFull$ver.np2pw.PLM
+11584040213 edges read
+zcat c2pFull$ver.np2pw.PLM | perl rankNew.perl c2pFull$ver.np2p 1 | gzip >  c2pFull$ver.np2pw.crank.map
+zcat  c2pFull$ver.np2pw.crank.map | awk -F\; '{if ($2 != $1)print $1";"$2 }' | gzip >  c2pFull$ver.np2pw.PLMmap.forks
+
+zcat c2pFull$ver.np2p.versions | /home/audris/src/networkit/cluster $(zcat c2pFull$ver.np2p.names|wc -l)  | gzip > c2pFull$ver.np2pu.PLM
+modularity=0.939244 nver=103612951 clusters=9966309 largest=625309
+zcat c2pFull$ver.np2pu.PLM | perl rankNew.perl c2pFull$ver.np2p 1 | gzip >  c2pFull$ver.np2pu.crank.map
+zcat  c2pFull$ver.np2pu.crank.map | awk -F\; '{if ($2 != $1)print $1";"$2 }' | gzip >  c2pFull$ver.np2pu.PLMmap.forks
+
+#a2a
+c=20 100 3000 30000
+zcat P2AFullT.nA2A.$c.s | perl connectExportVw.perl P2AFullT.nA2AP.$c 
+zcat P2AFullT.nA2AP.$c.versions | /home/audris/src/networkit/cluster $(zcat P2AFullT.nA2AP.$c.names|wc -l) | gzip > P2AFullT.nA2APu.$c.PLM
+paste -d\  <(zcat P2AFullT.nA2AP.$c.versions) <(zcat P2AFullT.nA2AP.$c.weights) | /home/audris/src/networkit/clusterw $(zcat P2AFullT.nA2AP.$c.names|wc -l) $(zcat P2AFullT.nA2AP.$c.weights|wc -l) | gzip > P2AFullT.nA2APw.$c.PLM
+zcat P2AFullT.nA2APw.$c.PLM | perl rankNew.perl P2AFullT.nA2AP.$c 1 | gzip >  P2AFullT.nA2APw.$c.crank.map
+zcat P2AFullT.nA2APu.$c.PLM | perl rankNew.perl P2AFullT.nA2AP.$c 1 | gzip >  P2AFullT.nA2APu.$c.crank.map
+#20u -    modularity=0.985762 nver=30763969 clusters=3914290 largest=151854
+#100u -   modularity=0.921918 nver=36981227 clusters=3339331 largest=2458058
+#3000u -  modularity=0.875331 nver=38759714 clusters=3201761 largest=3384986
+#30000u - modularity=0.868881 nver=39372059 clusters=3123334 largest=2997349
+#30000w - modularity=0.893545 nver=39372059 clusters=3112555 largest=2772919
+#3000w -  modularity=0.899088 nver=38759714 clusters=3213922 largest=3633416
+#100w -   modularity=0.938189 nver=36981227 clusters=3342010 largest=2516262
+#20w -    modularity=0.988562 nver=30763969 clusters=3914359 largest=138114
+
+#
+c=20
+zcat P2AFullT.nA2APw.$c.crank.map | cut -d\; -f2 | lsort 20G | uniq -c | lsort 1G -rn | head -20
+  81221 YSR <cumulonimbus96@gmail.com>
+  76825 shinara03 <shinara03@gmail.com>
+  67693 attarwal <attarwal@UTORONTO.CA>
+  62913 Nick <nickinpie@gmail.com>
+  51669 weitzman <weitzman>
+  49287 tanya1810 <tanya.sood.311@gmail.com>
+  48050 cosa65 <mfosc65@gmail.com>
+  47841 lassehh <sales@scrapeitout.com>
+  46528 Tuan <atuannguyen1101@gmail.com>
+  42824 olavoie <olavoie9507@gmail.com>
+  42063 tknappek <tknappek@localhost>
+  39508 ZackStr <zack.strulovitch@itential.com>
+  39275 Unknown <lyndond@uci.edu>
+  37938 Ileena Mitra <ileenam@surveymonkey.com>
+  36246 Jan Dageförde <jan@dagefor.de>
+  34547 tmathern <60901087+tmathern@users.noreply.github.com>
+  33485 nlbtdsdso <53069055+nlbtdsdso@users.noreply.github.com>
+  32454 phucmh-1356 <49380498+phucmh-1356@users.noreply.github.com>
+  31788 Siff <siff.ravn@gmail.com>
+  30503 Jura Laakkonen <jura.laakkonen@hiq.fi>
+
+zcat P2AFullT.nA2AP.$c.versions|ssh da3 "bin/connect" | gzip > P2AFullT.nA2AP.$c.clones
+zcat P2AFullT.nA2AP.$c.clones | cut -d\; -f2 | lsort 30G | uniq -c | lsort 1G -rn | head -3
+13371009 0
+    445 383009
+    418 676334
+    407 91410
+
+c=20    
+c=30000
+zcat P2AFullT.nA2APw.$c.crank.map | cut -d\; -f2 | lsort 20G | uniq -c | lsort 1G -rn | head -20
+1772917 onovy <novy@ondrej.org>
+1401109 Tomster <tomster@emberjs.com>
+ 412298 Force User <lvh3851@g.rit.edu>
+ 332934 Chris Pitt <chris@silverstripe.com>
+ 282566 beckermr <becker.mr@gmail.com>
+ 191827 sc82choi <blissray@gmail.com>
+ 177113 Anton <verybigbro@gmail.com>
+ 170220 Nitesh <nitesh.turaga@gmail.com>
+ 169528 Justin <jflory7@gmail.com>
+ 159443 a <562826179@qq.com>
+ 147677 mandark <A06438_P5.Training@accenture.com>
+ 133136 olprod <olprod@microsoft.com>
+ 129512 Max Wofford <max@hackedu.us>
+ 126652 llmel <Aluno@Digital.net>
+ 120815 Hector <hectorsector@github.com>
+ 119375 t-pot <imagire@gmail.com>
+ 109305 MichaelDimmitt <MichaelGDimmitt@gmail.com>
+ 100329 Federico Aloi <fede@mumuki.org>
+  97772 dlockhart <dlockhart@gmail.com>
+  92721 Adam Jonas <jonas@chaincode.com>
+
+c=1000  
+zcat P2PFullT.nb2b.$c.s | perl connectExportVw.perl P2PFullT.nb2b.$c 
+zcat P2PFullT.nb2b.$c.versions | paste  -d\   - <(zcat P2PFullT.nb2b.$c.weights) | /home/audris/src/networkit/clusterw $(zcat P2PFullT.nb2b.$c.names|wc -l) $(zcat P2PFullT.nb2b.$c.weights|wc -l) | gzip > P2PFullT.nb2bw.$c.PLM
+#modularity=0.895951 nver=51640553 clusters=1515055 largest=4213396
+zcat P2PFullT.nb2bw.$c.PLM | perl rankNew.perl P2PFullT.nb2b.$c 1 | gzip >  P2PFullT.nb2bw.$c.crank.map
+zcat P2PFullT.nb2bw.$c.crank.map | cut -d\; -f2 | lsort 20G | uniq -c | lsort 1G -rn | head -20
+2097991 cdnjs_cdnjs
+1738972 fuel_core
+1539576 z-song_laravel-admin
+1212948 DasyDong_DasyDong.github.io
+1033868 elastic_kibana
+ 862768 tensorflow_tensorflow
+ 790681 angular_angular
+ 563137 TelegramMessenger_Telegram-iOS
+ 547916 BVLC_caffe
+ 530790 cwoolcott_cwoolcott.github.io
+ 504309 buggins_coolreader
+ 421297 AmartyaU_WordPress
+ 417589 facebook_react
+ 415444 rafaelzolt_HugoQuickStart
+ 398238 cocos2d_cocos2d-x
+ 389486 openresty_lua-nginx-module
+ 340091 drupal_drupal
+ 328303 ARMmbed_mbed-os
+ 292958 thabataganga_idook
+ 276958 cvet_fonline
+
+zcat P2PFullT.nb2b.$c.versions|ssh da3 "bin/connect" | gzip > P2PFullT.nb2b.$c.clones
+zcat P2PFullT.nb2b.$c.clones | cut -d\; -f2 | lsort 30G | uniq -c | lsort 1G -rn | head -20
+zcat P2PFullT.nb2b.$c.versions | paste  -d\   - <(zcat P2PFullT.nb2b.$c.weights) > /data/play/forks/P2PFullT.nb2b.$c.csv
+perl getComponent.perl P2PFullT.nb2b.$c P2PFullT.nb2bw.$c.PLM 0 > P2PFullT.nb2bw.$c.0.forOSLO
+time /home/audris/src/OSLOM2/oslom_undir -f /data/play/forks/P2PFullT.nb2b.$c.0.csv -hint  /data/play/forks/P2PFullT.nb2bw.$c.0.forOSLO -w -r 1 -hr 1
+
+c=10
+modularity=0.975464 nver=35590319 clusters=2401011 largest=1766606
+ 773837 cdnjs_cdnjs
+ 507025 opf_openproject
+ 359456 z-song_laravel-admin
+ 225837 magicalpanda_MagicalRecord
+ 223712 AmartyaU_WordPress
+ 174380 JavascriptBootcamp_group4
+ 151064 ARMmbed_mbed-os
+ 149514 mopub_mopub-android-sdk
+ 106122 kubernetes_kubernetes
+ 105811 kenmick_WebCrawler
+ 102712 cndn_intelligent-code-completion
+ 102279 hrony_GitHub
+  99726 angular_code.angularjs.org
+  99326 kadirahq_paper-ui
+  96991 symfony_symfony
+  96429 barryclark_jekyll-now
+  94765 laravel_laravel
+  91059 BVLC_caffe
+  78939 rdpeng_ProgrammingAssignment2
+  71513 Sable_mcbench-benchmarks
+# too long /home/audris/src/OSLOM2/oslom_undir -f /data/play/forks/P2PFullT.nb2b.$c.csv -w -r 1 -hr 1
+
+base=A2AFullT.nfb.500
+zcat $base.s | perl connectExportVw.perl $base
+zcat $base.versions | paste  -d\   - <(zcat $base.weights) | /home/audris/src/networkit/clusterw $(zcat $base.names|wc -l) $(zcat $base.weights|wc -l) | gzip > $base.PLM
+#modularity=0.733959 nver=452306359 clusters=13681 largest=87041386
+zcat $base.PLM | perl rankNew.perl $base 1 | gzip >  $base.crank.map
+5181010 grvcodes <gurv0002@gmail.com>
+4308454 Taiwo <ayeolakenny@gmail.com>
+ 970561 Douglas Lovell <dclo@us.ibm.com>
+ 891289 adedayo2017 <maxistinlove@gmail.com>
+ 577967 Andreas Amsenius <andreas@amsenius.se>
+ 471961 Raphael <raphael.rb96@gmail.com>
+ 413288 Dacio <dacioromero@gmail.com>
+ 406610 Nathanaël <nathanael.spriet@gmail.com>
+ 388238 hadley <h.wickham@gmail.com>
+ 335966 Presto! <presto.core@yandex.com>
+
+base=t2PFullT.np2p
+zcat $base.s | perl connectExportVw.perl $base
+zcat $base.versions | paste  -d\   - <(zcat $base.weights) | /home/audris/src/networkit/clusterw $(zcat $base.names|wc -l) $(zcat $base.weights|wc -l) | gzip > ${base}w.PLM
+#modularity=0.980955 nver=9538003 clusters=2001208 largest=69173
+zcat ${base}w.PLM | perl rankNew.perl ${base} 1 | gzip >  ${base}w.crank.map
+zcat ${base}w.crank.map | cut -d\; -f2 | lsort 20G | uniq -c | lsort 1G -rn | head -20
+  50776 barryclark_jekyll-now
+  13369 zuihou_zuihou-admin-cloud
+  11861 gitlab.com_claasaug_example-long-term-project
+   7030 Jackeagle_kernel_msm-3.18
+   6355 TheMattSykes_personal-website
+   6208 dcherif_SimpleDevopsProject
+   5270 top-think_framework
+   5206 rdpeng_ProgrammingAssignment2
+   5019 frioux_dotfiles
+   4489 laravel_laravel
+   3882 forezp_SpringcloudConfig
+   3744 gitx_gitx
+   3178 git.savannah.gnu.org_git_mediagoblin
+   2612 STRYDER-007_aosp_development_aospcaf
+   2513 agrosner_DBFlow
+   2299 videojs_videojs-contrib-hls
+   2283 getlantern_lantern
+   2211 thomas-moulard_test_repo
+   2065 LhadyChloe_coursera-test
+   2038 mad-science_6178
+
+zcat $base.versions | paste  -d\   - <(zcat $base.weights) > $base.csv
+time /home/audris/src/OSLOM2/oslom_undir -f $base.csv -w -r 1 -hr 1
+real    116m13.715s
+cat $base.csv_oslo_files/tp | perl rankNewO.perl $base ${base}w.PLM | gzip > ${base}ow.crank.map
+zcat ${base}ow.crank.map | cut -d\; -f2 | lsort 20G | uniq -c | lsort 1G -rn | head -20
+  18455 barryclark_jekyll-now
+   5720 Jackeagle_kernel_msm-3.18
+   5443 TheMattSykes_personal-website
+   3435 frioux_dotfiles
+   3192 gitlab.com_gitlab-com_www-gitlab-com
+   3041 mmistakes_minimal-mistakes
+   2750 netlify-templates_gatsby-starter-netlify-cms
+   2011 STRYDER-007_aosp_development_aospcaf
+   1963 ARMmbed_DAPLink
+   1588 vinnymac_vinnymac.github.io
+   1587 rdpeng_ProgrammingAssignment2
+   1570 thomas-moulard_test_repo
+   1506 getlantern_lantern
+   1430 JohanSmet_udacity_carnd
+   1381 labzero_lunch
+   1377 symfony_symfony-standard
+   1308 carolmanderson_academic-kickstart
+   1205 laravel_laravel
+   1183 daattali_beautiful-jekyll
+   1144 DevMountain_learn-git
+
+zcat ${base}w.crank.map |grep cran_Epi
+cran_Epi;cran_Epi;0.000074
+salsa.debian.org_r-pkg-team/r-cran-epi;cran_Epi;0.000074
+
+zcat ${base}ow.crank.map |grep cran_Epi
+cran_Epi;cran_Epi
+
+
+base=T2TFullT.nb2b.20
+zcat $base.s | perl connectExportVw.perl $base
+zcat $base.versions | paste  -d\   - <(zcat $base.weights) | /home/audris/src/networkit/clusterw $(zcat $base.names|wc -l) $(zcat $base.weights|wc -l) | gzip > ${base}w.PLM
+#modularity=0.953600 nver=37981255 clusters=1923369 largest=2158481
+zcat ${base}w.PLM | perl rankNew.perl ${base} 1 | gzip >  ${base}w.crank.map
+zcat ${base}w.crank.map | cut -d\; -f2 | lsort 20G | uniq -c | lsort 1G -rn | head -20
+ 952938 JettBurns14_super-super-heroku-bot
+ 647035 spree_spree
+ 567755 laravel_laravel
+ 349635 JulCesMelPin_AngularJS_starters
+ 338295 frioux_dotfiles
+ 267115 roguedream_pyc_source
+ 258407 symfony_symfony-standard
+ 242865 barryclark_jekyll-now
+ 192294 EsotericSoftware_spine-runtimes
+ 190068 klightspeed_Arduino-Libraries
+ 180382 marmelab_react-admin
+ 153427 getlantern_lantern
+ 138478 expo_expo
+ 131086 hrony_GitHub
+ 128147 kenmick_WebCrawler
+ 127551 ant-design_ant-design-pro
+ 122529 cyrsis_LearnCSharp
+ 121266 udacity_Sunshine-Version-2
+ 113158 BVLC_caffe
+ 111427 git.savannah.gnu.org_git_mediagoblin
+
+
+zcat $base.versions | paste  -d\   - <(zcat $base.weights) > $base.csv
+time /home/audris/src/OSLOM2/oslom_undir -f $base.csv -w -r 1 -hr 1
+#too long
+base=T2TFullT.nb2b.10
+#modularity=0.966172 nver=34231127 clusters=2154971 largest=1494825
+ 644262 JettBurns14_super-super-heroku-bot
+ 490972 opf_openproject
+ 327855 spatie_laravel-feed
+ 226062 barryclark_jekyll-now
+ 223753 AFNetworking_AFNetworking
+ 216180 symfony_symfony-standard
+ 165154 VagTsop_tutorials-project-collection
+ 153475 EsotericSoftware_spine-runtimes
+ 137658 laravel_laravel
+ 131385 getlantern_lantern
+ 114050 frioux_dotfiles
+ 102181 kadirahq_paper-ui
+  99238 kenmick_WebCrawler
+  87708 micropython_micropython
+  83033 hrony_GitHub
+  78160 klightspeed_Arduino-Libraries
+  78127 imfht_phpsourcecode
+  76594 BitBagCommerce_SyliusCmsPlugin
+  75357 roguedream_pyc_source
+  71051 git.savannah.gnu.org_git_mediagoblin
+base=T2TFullT.nb2b.5
+#modularity=0.977951 nver=29384072 clusters=2522531 largest=595628
+ 227979 JettBurns14_super-super-heroku-bot
+ 217688 SocialiteProviders_Providers
+ 173142 symfony_symfony-standard
+ 152170 AFNetworking_AFNetworking
+ 139473 barryclark_jekyll-now
+  96758 Jackeagle_kernel_msm-3.18
+  86353 frioux_dotfiles
+  84352 ErikMoczi_packages.unity.com
+  82328 kaxap_arl
+  81981 klightspeed_Arduino-Libraries
+  74227 laravel_laravel
+  73472 roguedream_pyc_source
+  66570 axetroy_greasyfork.py
+  64380 git.savannah.gnu.org_git_mediagoblin
+  56736 Mattlk13_metacpan-cpan-extracted
+  51584 BitBagCommerce_SyliusCmsPlugin
+  50501 Wayne-Bai_AST-normalize
+  49766 surli_backup-experiments
+  49689 cndn_intelligent-code-completion
+base=T2TFullT.nb2b.2
+#modularity=0.992078 nver=19445607 clusters=3290435 largest=197057
+  81888 symfony_symfony-standard
+  74347 roguedream_pyc_source
+  62663 barryclark_jekyll-now
+  57550 JettBurns14_super-super-heroku-bot
+  49212 Jackeagle_kernel_msm-3.18
+  40875 frioux_dotfiles
+  39900 opf_openproject
+  39737 laravel_laravel
+  37616 getlantern_lantern
+  30575 git.savannah.gnu.org_git_mediagoblin
+  26581 drupal_drupal
+  24517 kaxap_arl
+  23962 surli_backup-experiments
+  23874 bitcoin_bitcoin
+  20261 Homebrew_homebrew-php
+  18721 kenmick_WebCrawler
+  18714 klightspeed_Arduino-Libraries
+  17413 TheMattSykes_personal-website
+  15307 Mattlk13_metacpan-cpan-extracted
+  15053 zhangkn_Demos4iOS
+
+#determine infrastructure repos
+zcat Dl2PfFullT.s |cut -d\; -f1,2|uniq|sed 's/;/|/;s/|Java/|java/' | gzip > Dl2nPT.g
+lsort 3G -t\; -k1,1 Infra.100 |cut -d\; -f1 | gzip > Infra.100.n
+zcat Dl2PfFullT.s | sed 's/;/|/;s/|Java/|java/' | ~/lookup/grepField.perl  Infra.100.n 1 |gzip > Infra.100.Def
+zcat Infra.100.Def|cut -d\; -f1,2|uniq|lsort 3G -t\; -k1,2 -u|cut -d\; -f1|uniq -c|perl -ane 'chop();s/^\s*//;s| |;|;($c,$p)=split(/;/);print "$p;$c\n"'|lsort 3G -t\; -k1,1 | gzip > Infra.100.Def.c
+zcat Infra.100.Def.c|join -t\; - <(lsort 3G -t\; -k1,1 Infra.100) |sed 's/|/;/' > Infra.100.DepDef.c
+
+
+
+zcat Pkg2lPS{[0-9],[1-3][0-9]}.s| cut -d\; -f1,2 |uniq -c|awk '{if ($1>100) print $0}' |sed 's|^\s*||;s| |;|'| gzip > InfraPackages
+zcat InfraPackages | perl -ane '$str=$_;@x=split(/;/,$str);$x[1]=~s/\.\*$//;@y=split(/\./, $x[1]);print "$y[$#y];$str"' | ~/lookup/splitSecCh.perl InfraPackages. 128
+for i in {0..127}; do zcat InfraPackages.$i.gz | lsort 1G -t\; -k1,1 | join -t\; - <(zcat export2PFullT$i.s|lsort 2G -t\; -k1,1); done | gzip > InfraPackages.joined
+zcat InfraPackages.joined|perl -ane 'chop();@x=split(/;/);@a=split(/\./, $x[2]);pop @a; @b=split(/\./, $x[6]); print "$_\n" if $b[$#b] eq $a[$#a];' |gzip > InfraPackages.clean
+#for java
+zcat  InfraPackages.clean|awk -F\; '{split($3,a,".");split($7,b,".");if ($2>100 && $4 == $5 && a[length(a)-1]== b[length(b)]){print $0}}'
+
+zcat  InfraPackages.clean|awk -F\; '{if ($2>100 && $4 == $5 && $4 != "java"){print $0}}'
+##### Highly shared blobs in: over 1006533 commits
+ls /fast/b2cFullT.*.tch.large.*|sed 's|.*tch.large.||'|~/lookup/getValues b2f | awk -F\; '{print $1";"NF";"$NF}' > CommonBlobs
+ls -l /fast/b2cFullT.*.tch.large.*|sed 's|.*da \s*||;s| .*tch.large.|;|'|while IFS=\; read s b; do echo $b";"$((($s-20)/20)); done | sort -t\; -k2 -n > CommonBlobs.nc
+tail -20 CommonBlobs.nc
+
+dea3013d6710ee273f49ac606a65d5211d480c88;1788867  ISC License
+65c5ca88a67c30becee01c5a8816d964b03862f9;1796186  lgplv3
+a11777cc471a4344702741ab1c8a588998b1311a;1926624  favicon.ico
+6b60c1042f58d9fabb75485aa3624dddcf633b5c;1994195  some svg
+dfe0770424b2a19faf507a501ebfc23be8f54e7b;2044669  # Auto detect text files and perform LF normalization\n* text=auto
+4d29575de80483b005c29bfcac5061cd2f45313e;2089446  .gitignore
+e7b4def49cb53d9aa04228dd3edb14c9e635e003;2123200  include ':app'
+7f68460d8b38ac04e3a3224d7c79ef719b1991a9;2374448  RunConfigurationProducerService
+94a9ed024d3859793618152ea559a168bbcbb5e2;2415767  gplv3
+3c3629e647f5ddf82548912e337bea9826b434af;2430398  node_modules
+94fb5490a2ed10b2c69a4a567a4fd2e4f706d841;2546034   glyphicons-halflings-regular.svg
+5008ddfcf53c02e82d7eee2e57c38e5672ef89f6;2551838  .DS_Store
+b93a4953fff68df523aa7656497ee339d6026d64;2638539  glyphicons-halflings-regular.eot
+1413fc609ab6f21774de0cb7e01360095584f65b;2655492  glyphicons-halflings-regular.ttf
+9e612858f802245ddcbf59788a0db942224bab35;2672427  glyphicons-halflings-regular.woff
+64539b54c3751a6d9adb44c8e3a45ba5a73b77f0;2680048  glyphicons-halflings-regular.woff2
+796b96d1c402326528b4ba3c12ee9d92d0e212e9;2891784  "/build"
+94a25f7f4cb416c083d265558da75d457237d671;3470163  "xml: VcsDirectoryMappings
+8b137891791fe96927ad78e64b0aad7bded08bdc;7290209  "\n"
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391;57126599 ""
+
+https://e.chase.com/T/v6000001799f22108cb0e7bb6e966a3578/df4b90a9c38744eb0000021ef3a0bcc6/df4b90a9-c387-44eb-83fd-26fe8aadead8?__F__=v0fUYvjHMDjRPMSh3tviDHXIoXcPxvDgUUCCPvXMWoX_0JoZLAZABQFwlrGt0pA4PxIRrWOgZzYHN8dssdhH2aKq7iSryUic22
+Fwr0QNuBHaGOUH_rsD-9Rzgp--UY3-GIOa0KIJFLod2KlNDMqNjOov-UaS_fzDe-9A459fRGxYSDIOq8-zdqCj9CuFNR5NWSKgPJ4pKiON7GreOoL_aso0pIvl4vIllT2yxNEFTi_gNoX6V1ZrJaj-UtuVJfjRQqac7C7l1fJ1QgzGmAJfb6LlIzKPp-67hQUw1-0dG1L5n8Q1-ZLYRzTAIAt-JzFc6Sc55oxGKhFK4uBS5LWWYTo1lNvg4VNiQ
+0neHPiFp2BlbQDqsvzMvdGTIDcvazpTbuasaUlaZ7IAeglJTN3ryBEC4GlBX_rJDN_fin-3hq9B2Vlj9Ue4vOe0sTy6iI92fugSZ3IWs8QGs=
+
+
+zcat  largeb2PT.s|lsort 100G -t\; -rn -k2 |head -20
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391;22557224 ""
+8b137891791fe96927ad78e64b0aad7bded08bdc;3960138  "\n"
+94a25f7f4cb416c083d265558da75d457237d671;3053308  
+796b96d1c402326528b4ba3c12ee9d92d0e212e9;2333442
+7f68460d8b38ac04e3a3224d7c79ef719b1991a9;2042698
+dfe0770424b2a19faf507a501ebfc23be8f54e7b;1963691
+64539b54c3751a6d9adb44c8e3a45ba5a73b77f0;1921635
+9e612858f802245ddcbf59788a0db942224bab35;1916190
+1413fc609ab6f21774de0cb7e01360095584f65b;1904289
+b93a4953fff68df523aa7656497ee339d6026d64;1893977
+94fb5490a2ed10b2c69a4a567a4fd2e4f706d841;1827139
+e7b4def49cb53d9aa04228dd3edb14c9e635e003;1814410
+4d29575de80483b005c29bfcac5061cd2f45313e;1764745
+3c3629e647f5ddf82548912e337bea9826b434af;1761602
+5008ddfcf53c02e82d7eee2e57c38e5672ef89f6;1703087
+6b60c1042f58d9fabb75485aa3624dddcf633b5c;1652127
+cccdd3d517fc5249beaefa600691cf150f2fa3e6;1489139
+a11777cc471a4344702741ab1c8a588998b1311a;1452271
+59385cdf379bd06a8d2326dcd4de6d5cd5d3f5b0;1444342
+b1c56658557b8162aa9f5ba8610ed03a5e558d9d;1365816
+
+#most licenses
+zcat ../c2fb/P2LFullT{[0-9],[1-3][0-9]}.s | cut -d\; -f1 | uniq -c | lsort 3G -rn | head
+  66247 pombredanne_license-detection-test-data
+   7761 barryclark_jekyll-now
+   6694 Mattlk13_metacpan-cpan-extracted
+   5245 TheMattSykes_personal-website
+   5239 gitlab.com_atoomic_CPAN
+   3693 caolan_async
+   3356 gitlab.com_gitlab-com_www-gitlab-com
+   3205 carolmanderson_academic-kickstart
+   3106 videojs_videojs-contrib-hls
+   3085 drupal_drupal
+#Most common licenses
+zcat ../c2fb/bL2nPFullT.s|lsort 3G -t\; -k2 -rn |head
+e69de29bb2d1d6434b8b29ae775ad8c2e48c5391;22557224 # empty
+8b137891791fe96927ad78e64b0aad7bded08bdc;3960138  # \n
+796b96d1c402326528b4ba3c12ee9d92d0e212e9;2333442  # /build
+dea3013d6710ee273f49ac606a65d5211d480c88;1364470  #ISC
+a7ae8ee9b8a30ef2a73ff5a7a80adc3b1a845cae;1248566  #MIT
+d4569487a094b9ffb6e42ed157c32f8a5440a07a;1206407  #Nathan LaFreniere
+06166077be4d1f620d89b9eb33c76d89e75857da;1178849  #MIT
+654d0bfe943437d43242325b1fbcff5f400d84ee;1161826  #MIT
+0c068ceecbd48fc4e8279e6451793fec2bf12178;1142651  #MIT
+19129e315fe593965a2fdd50ec0d1253bcbd2ece;1130383  #ISC
+
+   
+
+zcat ${base}w.PLM | perl AnnoteCent.perl ${base} | gzip > $base.annotated
+
+
+perl getType.perl | gzip > P2fP4FullT.s2
+zcat P2fP4FullT.s2 | awk -F\; '{if ($1==$2)print $0}'|cut -d\; -f1,3,5,7,9,11,13,14,19,20|gzip > P2fP4FullT.Pstats
+zcat P2fP4FullT.Pstats|cut -d\; -f6|lsort 10G |uniq -c
+8209126 d
+7872040 d70
+3829321 d90
+60499607 o
+9040410 u
+
+zcat P2fP4FullT.s2 | awk -F\; '{if ($1!=$2&&$15/$13 > 0.5 && $15/$17 > .5 && $15>=$16 && $15>1)print $0}' |gzip > P2fP4FullT.StrongReuseLinks05-1
+
+base=P2fP4FullT.StrongReuseLinks05-1
+zcat /data/basemaps/gz/$base |  cut -d\; -f1,2  | perl ~/bin/connectBasic.perl $base |gzip > $base.map
+
+zcat $base.versions | /home/audris/src/networkit/cluster $(zcat $base.names|wc -l) | gzip > $base.PLM
+#modularity=0.988932 nver=1442864 clusters=387376 largest=70422
+
+zcat $base.PLM | perl rankNew.perl $base 1 | gzip > $base.crank.map
+
+zcat P2fP4FullT.s2 | awk -F\; '{if ($1!=$2 && $15/$13 > 0.1 && $15/$17 > .1 && $15>=$16 && $15>10)print $0}' |gzip > P2fP4FullT.StrongReuseLinks01-10
+
+###########################################################
+#time-based blob-sharing
+
+
+We aim to measure the extent of code sharing at the entire FLOSS
+ecosystem level and elicit the reasons for such sharing activity.
+
+
+We find over 97% of repositories of nontrivial size to share some
+blobs and over 10\% percent of the repositories to be 100\% derived.
+From among 45M repositories containing over 20 blobs, 9M consist
+over 90\%, 12.6M over 70\% and 6M over 50\% of original blobs.
+
+The sharing of blobs among repositories forms a complex network with
+over X\% of the repositories sharing blobs with five or more other
+repositories and 82% of all repositories formin one giant component that
+can be traversed via shared blobs.
+
+The investigation of the nature of code sharing identified several
+principal reasons behind wide-scale sharing:
+
+The most widely shared blobs have simple or default content as, for example, and empty
+file with just a newline character is shared among 22M repositories.
+%Such empty/simple files may not even be intentianally shared but may be created independently.
+
+Once such widely shared artifacts are removed from the blob-project bi-graph
+(by considering only the blobs shared among fewer than 100 reopositories)
+
+- The collections of software and artifacts represent
+the largest networks of shared source code. For example,
+roguedream/pyc_source, gitlab.com/atoomic/CPAN,
+cdnjs/cdnjs.
+
+- The next largest network is created by code sharing
+among linux kernel repositories (Jackeagle/kernel_msm-3.18).
+
+- The very large collection of SO snippets used to train
+DL methods for programming language and bug detection
+(aliostad/deep-learning-lang-detection and imanchatterjee/BugDetection) represents another type of
+collection where software code is treated as data for DL methods.
+
+- Anoter type of very large network was build bot for chromium that
+would get source code from numerous other projects used by chromium
+browswer (bloomberg/chromium.bb).
+
+Another type of large-scale sharing involves software collections
+curated by well-known individuals and organizations (hadley_cran-packages)
+
+- Reasons for small-scale (few repositories involved) sharing
+iiclude code sharing between the primary repository and copy-then-commit
+mirrors or forks. For example, the downstream versions of
+packages in Debian distribution are not forks of the upstream
+repositories. Instead they copy and commit code from the upstream
+projects and make minor modifications to ensure that all projects in the
+distribution can be copmiled and deployed.
+
+- Artifacts from an author that are related to multiple repos as code
+examples from a book in Cran_vars and cran_urca
+
+
+
+
+Only 4.7M of the total of 90M repositories have
+such/similar mirrors reducing this 4.7M down to 1.6M of non-duplicate
+repositories.
+
+
+- Yet another drupal_drupal
+
+ver=T
+for sel in SL L S
+do (time perl getType1.perl $sel |gzip > fP2${sel}PStats$ver.s)
+   zcat fP2${sel}PStatsT.s | cut -d\; -f1-6 | uniq | gzip > fP2${sel}PStatsT.Pstats
+done
+
+
+#L
+Largest by in-degree
+zcat /data/basemaps/gz/$base.s | awk -F\; '{ if ($3 > i){ i=$3; print $0} }'
+pombredanne_license-detection-test-data;d;60833;258;64550;480;1;shyler1987_umnenie_0;o70;136;6;4083;3005;0
+x0rzkov_dockerfiles-search;o50;156746;497;500244;283834;1;ssweriduk_wordpress-alpine-nginx-scalable-xdebug;o50;6;0;29;18;0
+
+largest by out degree
+zcat /data/basemaps/gz/$base.s | awk -F\; '{ if ($4 > o){ o=$4; print $0} }'
+TryGhost_Casper;o;976;5034;53403;49105;1;judge_security-drops;o;2;0;150;148;0
+2215_he-said-she-said.github.io;o;2093;16089;596119;593274;1;wix_wix-hive-activity-schemas;o;3;1;206;189;0
+udacity_frontend-nanodegree-resume;o;8034;17607;415022;385502;1;mmayorivera_angular-sync;u;63;32;155;74;0
+frioux_dotfiles;o70;8909;47719;545180;432205;1;zlraymind_vim_config_mac;o50;28;10;107;73;0
+gitlab.com_gitlab-com_www-gitlab-com;o;31725;96738;28554613;28209339;2;hamxiaoz_StandOut;o50;1;0;9;7;0
+cdnjs_cdnjs;o50;12103;134166;1274921;697481;5;nvbkdw_b3nchai;d70;70;100;2125;510;0
+barryclark_jekyll-now;o;91298;209624;13450186;12604996;1;bibhu545_HealthCare;o;21;10;608;584;0
+
+largest by number of artifacts shared out with a single other reopo
+zcat /data/basemaps/gz/$base.s | awk -F\; '{ if ($7 > s&& $1 != $8){ s=$7; print $0} }'
+eclipse_sumo;o;286;929;465796;423181;112111;trezheur_sumo_svn;d;50;0;150147;1;0
+eclipse_jetty.website;o70;40;1;209069;175137;174674;git.eclipse.org_r_www.eclipse.org/jetty;o50;48;137;527649;318069;676
+usehotkey_counter;u;3519;1521;997157;450476;450474;one-million-repo_one-million-repo;d;3519;22;997156;2060;2059
+freebsd_freebsd;o70;1571;16610;3443707;2857124;810169;mat813_freebsd;d;805;133;1118150;564;86
+g0v-data_mirror;o;19;49;6816419;6747858;1024637;g0v-data_mirror-2016;d;8;1;1034766;4698;4698
+git-portage_git-portage;o50;1374;4556;3493448;1873632;1675301;gentoo_gentoo;o50;2652;0;18191419;10679708;0
+gentoo_gentoo-portage-rsync-mirror;o50;1787;778;10811815;6749143;4225197;gentoo_gentoo;o50;2652;0;18191419;10679708;0
+
+largest by number of artifacts shared in with a single other reopo
+zcat /data/basemaps/gz/$base.s | awk -F\; '{ if ($14 > s&& $1 != $8){ s=$14; print $0} }'
+bloomberg_chromium.bb;u;5342;60627;9317283;3626734;1394237;chromium_chromium;o50;2053;10999;7370627;4218074;2624148
+Oleh-Kravchenko_portage;d90;1699;517;7136663;84107;39732;gentoo_gentoo-portage-rsync-mirror;o50;1787;778;10811815;6749143;3715461
+
+#overall
+base=fP2PStatsT
+i
+zcat /data/basemaps/gz/$base.Pstats| awk -F\; '{ if ($3 > i){ i=$3; print $0} }'
+diogom42_d4jdata;o;2;5;303;301
+alexey-oblomov_chat_app_backend;o70;15;1;183;160
+kylemezzacappa_Gratis;d90;40;1;2145;91
+FishAres_Learning-stuff;o70;108;2;679;517
+rzfreitas_verde-ghaia;o50;123;9;5616;3750
+ashkan18_theReader;d90;184;226;13285;136
+nicky132_reactMobx;d90;256;43;26052;1864
+bitbucket.org_Carvalier_snapthailand-web;d90;332;8;7643;459
+changchiajung_vue-demo;d;431;4;15141;43
+MaxYuan85_ChainGamble;d90;433;1;11603;770
+swaaminathanm_OTART201802;d90;464;56;15607;1446
+vladimireanu_react-e-commerce;d90;502;58;28440;2104
+kdv24_Starter_Codes;d;724;31;8036;17
+rajnish42413_pizza-front;d70;838;1;25616;5673
+gitfer_our-monthly-expenses;d;970;385;15308;22
+backpack455_HEARD;d;1626;12;50376;103
+JacobcobLee_Fault-reporter;d70;1824;23;71712;14036
+rafaelzolt_HugoQuickStart;d;2578;91;41404;71
+TryGhost_Casper;o50;3102;18485;95930;49411
+Anterotesis_historical-texts;d;32706;227;62340;285
+pombredanne_license-detection-test-data;d;67548;258;73723;480
+x0rzkov_dockerfiles-search;o50;157323;497;500653;283834
+
+
+o
+zcat /data/basemaps/gz/$base.Pstats| awk -F\; '{ if ($4 > i){ i=$4; print $0} }'
+reviewboard_rb-extension-pack;o70;18;50;700;625
+UltimateAngular_angular-pro-src;o70;41;134;1276;1106
+vyacheslav31_React-Monsters-Tutorial;o50;17;185;58;33
+AccordLTN_my-odin-project;u;68;487;271;126
+veros7821_web;o70;6;488;36;29
+trliner_fake_id;o;0;511;15;15
+iominh_mramato.github.io;d70;88;1205;4763;731
+camspiers_json-pretty;o;3;2798;46;43
+prodev1017_react-bootstrap-master;o50;6;5349;591;381
+akbr_prestige;o70;152;13259;4338;3331
+gitorious.org_page-six;o70;22;30033;1693;1255
+mathiasbynens_jquery-placeholder;o;13;33206;495;479
+houdiniproject_houdini;o;130;36022;9462;9181
+airbnb_babel-plugin-dynamic-import-node;o;16;36137;520;482
+postcss_autoprefixer;o;86;116347;6148;5939
+luhur65_web-berita-Rest-API;d90;7;305678;1655;152
+sir-haleem_aremuacademy-redesigned;o50;9;549260;56;38
+ajbt200128_Attendance-System;o;2;1499507;141;139
+adbl_misfire-ui;o70;63;1576626;4343;3684
+sprietNathanael_CPE_4_EmbeddedSystems;o50;40;2205859;1596;888
+px4_ros-examples;o;4;3118972;474;464
+mozilla_gecko-dev;o;4153;18660102;10404110;9467420
+Unipisa_test_git_old_dates;o;0;22557223;3;3
+
+
+gitorious.org_page-six;o70;22;30033;1693;1255;1;sheepcao_ZeroCityShop;d70;616;13;20815;3740;0
+mathiasbynens_jquery-placeholder;o;13;33206;495;479;1;second-ob_qiang;d70;85;1;476;48;0
+houdiniproject_houdini;o;130;36022;9462;9181;1;osiotestmachine_osio-ci-boost3-BDD-0107-0812-test123;d;21;0;36;1;0 
+airbnb_babel-plugin-dynamic-import-node;o;16;36137;520;482;1;chrisyuaners_plan-it-app;d90;489;16;23773;532;0 # .npmignore
+postcss_autoprefixer;o;86;116347;6148;5939;3;mojopoly_quotesondev;d90;375;6;14444;1045;0 # "\n\n"
+luhur65_web-berita-Rest-API;d90;7;305678;1655;152;5;grmnlrt_secret-santa;d;365;0;12103;34;0 # jquery-3.4.1.min.js
+sir-haleem_aremuacademy-redesigned;o50;9;549260;56;38;10;ShafiqHalim007_Shafiq-Halim;u;97;29;423;151;0 #2M glyphicons-halflings-regular.woff
+ajbt200128_Attendance-System;o;2;1499507;141;139;7;mainangethe_networking-app;o50;62;11;293;164;0 - initializers/backtrace_silencers.rb 59385cdf379bd06a8d2326dcd4de6d5cd5d3f5b0
+adbl_misfire-ui;o70;63;1576626;4343;3684;7;sumitgpl_awsLambda;d70;46;0;385;57;0 # over 20 widely used  with 1.3M The ISC License
+sprietNathanael_CPE_4_EmbeddedSystems;o50;40;2205859;1596;888;1;ejdzipi_emotion-jest-serializer-repro;o70;1;0;9;8;0 #.idea\nnode_modules
+px4_ros-examples;o;4;3118972;474;464;1;PabloViniegra_ejercicioADEmpleados;o70;4;0;40;36;0 # project file VcsDirectoryMappings 94a25f7f4cb416c083d265558da75d457237d671
+mozilla_gecko-dev;o;4153;18660102;10404110;9467420;1;webmproject_vp9-dash;o;3;0;100;97;0 - "\n\n"
+Unipisa_test_git_old_dates;o;0;22557223;3;3;1;ruturaaj_jqtoggle;o50;5;0;17;11;0 - empty blob
+
+#most original
+zcat /data/basemaps/gz/$base.Pstats| awk -F\; '{ if ($6 > i){ i=$6; print $0} }'
+diogom42_d4jdata;o;2;5;303;301
+reviewboard_rb-extension-pack;o70;18;50;700;625
+rzfreitas_verde-ghaia;o50;123;9;5616;3750
+rajnish42413_pizza-front;d70;838;1;25616;5673
+arokde_ScratchPadProjects;d70;423;17;19873;5952
+d5j6_Geology_BETA;o50;208;33;11624;5983
+elymichael_BibliotecaLibros;o;48;7;9340;9177
+Mozu_mozu-ios-sdk;o;17;7;12748;12710
+Julian-Wyatt_Sudoku;o;7;1;70972;70965
+Smithsonian_OpenAccess;o;3;1;138020;138017
+CenterForOpenScience_osf.io;o70;963;10852;168668;148335
+DoutorGois_BTI;o;11;11;263007;261967
+MercifulPotato_mercifulpotato;o;8;2;1787801;1784523
+freebsd_freebsd;o70;2337;350634;3665838;2860153
+guillermoiglesiashernandez_Dataset;o;12;1;4243527;4243513
+grantmakers_profiles;o;43;25;7725253;7725032
+elastic_docs;o;160;163;10169275;10070686
+whosonfirst-data_whosonfirst-data;o;11;835;15959110;15958156
+brbrr_test-dashboard-pages;o;58;2;17216790;17131103
+gitlab.com_gitlab-com_www-gitlab-com;o;53298;479814;28924219;28213688
+jdtournier_mrtrix3-dev-doc;o;191;162;36998066;36821950
+swift-zym_scp-docs;o;18;0;39366489;39120868
+
+no - stats
+zcat /data/basemaps/gz/$base.s | awk -F\; '{ if ($6 > s&& $1 != $8){ s=$6; print $0} }'
+diogom42_d4jdata;o;2;5;303;301
+reviewboard_rb-extension-pack;o70;18;50;700;625
+rzfreitas_verde-ghaia;o50;123;9;5616;3750
+rajnish42413_pizza-front;d70;838;1;25616;5673
+arokde_ScratchPadProjects;d70;423;17;19873;5952
+d5j6_Geology_BETA;o50;208;33;11624;5983
+elymichael_BibliotecaLibros;o;48;7;9340;9177
+Mozu_mozu-ios-sdk;o;17;7;12748;12710
+Julian-Wyatt_Sudoku;o;7;1;70972;70965
+Smithsonian_OpenAccess;o;3;1;138020;138017
+CenterForOpenScience_osf.io;o70;963;10852;168668;148335
+DoutorGois_BTI;o;11;11;263007;261967
+MercifulPotato_mercifulpotato;o;8;2;1787801;1784523
+freebsd_freebsd;o70;2337;350634;3665838;2860153
+guillermoiglesiashernandez_Dataset;o;12;1;4243527;4243513
+grantmakers_profiles;o;43;25;7725253;7725032
+elastic_docs;o;160;163;10169275;10070686
+whosonfirst-data_whosonfirst-data;o;11;835;15959110;15958156
+brbrr_test-dashboard-pages;o;58;2;17216790;17131103
+gitlab.com_gitlab-com_www-gitlab-com;o;53298;479814;28924219;28213688
+jdtournier_mrtrix3-dev-doc;o;191;162;36998066;36821950
+swift-zym_scp-docs;o;18;0;39366489;39120868
+
+
+60d7d529a95e:/data/play/forks>zcat /data/basemaps/gz/$base.s | awk -F\; '{ if ($7 > s&& $1 != $8){ s=$7; print $0} }'
+diogom42_d4jdata;o;2;5;303;301;1;rwang63_Arbitrage-Finder;o70;13;0;51;38;0
+Eiv1nd_MachineLearning;o70;1;1;5;4;3;eriktok_AntcolonyOptimization;d;2;0;4;0;0
+DimitraApostolopoulou_PhotoViewer;o50;17;2;49;31;9;dimiap_ImageViewer;u;15;0;39;13;0
+reviewboard_rb-extension-pack;o70;18;50;700;625;51;ZHKKKe_se-workshop;d;5;0;60;1;0
+UltimateAngular_angular-pro-src;o70;41;134;1276;1106;226;PowerlessCube_Todd-Motto-Angular;u;14;4;474;161;2
+UltimateAngular_angular-pro-src;o70;41;134;1276;1106;227;iliassk_UltimateAngular;d70;37;14;601;69;0
+UltimateAngular_angular-pro-src;o70;41;134;1276;1106;232;manucho007_UltimateCourses;d70;40;5;660;196;1
+gitorious.org_reusable/reusable;o70;62;148;1377;1185;757;cqnu_Reusable;d70;97;1;1481;437;0
+WangscGit_learnGit;u;173;6;1698;814;812;WangscGit_gitWarehouse;d;174;0;1698;2;0
+ondras_js-like;o;8;120;2289;2133;2130;droidenko_js-like;d70;8;3;2403;265;148
+Akai-Kumako_Experiment;o;2;2;22582;22481;4944;kamuiroeru_nitacLT;d;5;3;5086;17;0
+Akai-Kumako_Experiment;o;2;2;22582;22481;9809;yamasy1549_exp-nlp;d90;3;1;10023;113;0
+sourishbanerjee_APPARELCBIRVGG16;o;1;7;85398;85397;80412;bitbucket.org_udithprabhu_hackathon_dataset;u;2;0;140893;60480;0
+eclipse_sumo;o;488;2296;467638;423188;112117;trezheur_sumo_svn;d;83;0;150222;1;0
+eclipse_jetty.website;o70;79;1;209232;175137;174674;git.eclipse.org_r_www.eclipse.org/jetty;o50;96;549;527841;318070;677
+usehotkey_counter;u;3619;1521;1000003;450476;450474;one-million-repo_one-million-repo;d;3618;22;1000001;2060;2059
+ssbattousai_Cuda14;u;5;20;1796523;778157;698925;ssbattousai_Cuda15;u;5;5;1783087;538616;334610
+ssbattousai_Cuda14;u;5;20;1796523;778157;754307;ssbattousai_Cuda12;d70;5;20;1832312;322227;297631
+freebsd_freebsd;o70;2337;350634;3665838;2860153;812326;mat813_freebsd;d;1323;133;1308058;564;86
+g0v-data_mirror;o;21;49;6816423;6747858;967636;g0v-data_mirror-2017;d;7;1;991161;4833;4833
+g0v-data_mirror;o;21;49;6816423;6747858;1024637;g0v-data_mirror-2016;d;10;1;1034768;4698;4698
+git-portage_git-portage;o50;1534;8178;3494204;1873719;1041325;minaco2_gentoo-portage-mirror;d;1152;2;2269494;22;4
+git-portage_git-portage;o50;1534;8178;3494204;1873719;1675388;gentoo_gentoo;o50;2859;18398;18192295;10679971;1415495
+gentoo_gentoo-portage-rsync-mirror;o50;1963;778;10812562;6749143;4225197;gentoo_gentoo;o50;2859;18398;18192295;10679971;2856807
+9
+#Questions what is reused why reused (why not package manager) do therefr where it was copied, does it need to be maintained (license/image), IP/licensing (SO snippets) amount invisible reuse top predict demand (issues)
+1) What is the repo for?
+2) What artifacts does it contain?
+3) Why the artifacts it contains are  useful?
+4)   for whom?
+5) Who are biggest contributors?
+6) What are the most shared artifacts it produced?
+7) What are other repos with wich it shares the most artifacts?
+
+Q about blobs
+   Usage and Attribution of Stack Overflow Code Snippets in GitHub Projects https://empirical-software.engineering/assets/pdf/emse18-snippets.pdf 
+   SOTorrent: Studying the Origin, Evolution, and Usage of Stack Overflow Code Snippets https://arxiv.org/pdf/1809.02814.pdf
+
+   http://www.cs.columbia.edu/~blei/papers/RanganathPerotteElhadadBlei2015.pdf 
+
+#Use histogram in terms of copying
+library(data.table)
+x=read.table("fP2PStatsT.Pstats.csv", sep=";",quote="",comment.char="")
+xL=read.table("fP2LPStatsT.Pstats.csv", sep=";",quote="",comment.char="")
+nn = c("prj", "type", "inD", "outD", "nb","nob");
+names(x)=nn
+names(xL)=nn
+quantile(x$inD,0:10/10)                                                                                                                                                                                                                                                                                       
+0%    10%    20%    30%    40%    50%    60%    70%    80%    90%   100% 
+0      0      1      1      2      3      5      8     13     27 157323 
+quantile(x$outD,0:10/10)                                                                                                                                   0%    10%   20%    30%    40%    50%  60%      70%   80%      90%     100% 
+0      0     0      0      0      0    0        1     1        4 22557223 
+     
+quantile(x$nb,0:10/10)
+      0%      10%      20%      30%      40%      50%      60%      70% 
+       1        2        3        7       12       21       36       61 
+     80%      90%     100% 
+     113      324 39366489 
+quantile(x$nob,0:10/10)
+      0%      10%      20%      30%      40%      50%      60%      70% 
+       0        1        2        4        7       11       19       32 
+     80%      90%     100% 
+      61      152 39120868 
+
+
+> quantile(xL$inD,0:10/10) 
+    0%    10%    20%    30%    40%    50%    60%    70%    80%    90%   100% 
+     0      0      0      0      0      1      1      2      4      7 156746 
+> quantile(xL$outD,0:10/10) 
+    0%    10%    20%    30%    40%    50%    60%    70%    80%    90%   100% 
+     0      0      0      0      0      0      0      1      1      5 209624 
+> quantile(xL$nb,0:10/10) 
+      0%      10%      20%      30%      40%      50%      60%      70% 
+       1        1        3        6       10       16       25       43 
+     80%      90%     100% 
+      80      202 39366484 
+> quantile(xL$nob,0:10/10) 
+      0%      10%      20%      30%      40%      50%      60%      70% 
+       0        1        2        4        8       12       20       34 
+     80%      90%     100% 
+      64      160 39120868 
+      
+selLL = xL$nb>20
+> quantile(xL$outD[selLL],0:10/10)
+0%    10%    20%    30%    40%    50%    60%    70%    80%    90%   100% 
+     0      0      0      0      0      1      1      2      4     11 209624 
+> quantile(xL$inD[selLL],0:10/10) 
+     0      0      1      1      2      3      4      5      8     13 156746
+selL = selLL & (xL$outD > 4 | xL$inD > 8)
+
+selAL = x$nb>20
+quantile(x$outD[selAL],0:10/10)
+      0%      10%      20%      30%      40%      50%      60%      70% 
+       0        0        0        0        0        0        1        2 
+     80%      90%     100% 
+       4       10 18660102 
+quantile(x$inD[selAL],0:10/10)
+    0%    10%    20%    30%    40%    50%    60%    70%    80%    90%   100% 
+     0      2      3      5      7     10     13     18     26     50 157323 
+
+selA = selAL &  (x$outD > 10 | x$inD > 50)
+
+
+#Do first sampling: 40 projects
+
+
+selLL = xL$nb>20
+selL = selLL & (xL$outD > 4 | xL$inD > 8)
+
+selAL = x$nb>20
+selA = selAL &  (x$outD > 10 | x$inD > 50)
+xSample = sample(as.character(x$prj[selA]),100)
+xLSample = sample(as.character(xL$prj[selL]),100)
+
+summary(x[match(xSample,x$prj),])
+                                   prj      type         inD        
+ 2016llf_LLFSwifDemo                 : 1   d  : 3   Min.   :  0.00  
+ 2040RICARDO_sistemaelectromecanicav1: 1   d70:20   1st Qu.: 19.25  
+ ADAMBURTON428_Jedds                 : 1   d90:21   Median : 58.00  
+ AnaBrando_SoftBar                   : 1   o  :14   Mean   : 81.87  
+ Appefy_Graphico                     : 1   o50: 8   3rd Qu.:102.00  
+ Chaitanya-SiteMinder_MEANApp        : 1   o70:22   Max.   :802.00  
+ (Other)                             :94   u  :12                   
+      outD              nb               nob         
+ Min.   :  0.00   Min.   :   24.0   Min.   :   2.00  
+ 1st Qu.:  2.00   1st Qu.:  183.5   1st Qu.:  59.75  
+ Median : 15.00   Median :  668.0   Median : 162.50  
+ Mean   : 34.14   Mean   : 1714.3   Mean   : 451.79  
+ 3rd Qu.: 43.00   3rd Qu.: 2192.2   3rd Qu.: 422.00  
+ Max.   :292.00   Max.   :18834.0   Max.   :5841.00  
+
+summary(xL[match(xLSample,xL$prj),])
+                                     prj      type         inD       
+ 1004839068_project                    : 1   d  : 3   Min.   : 0.00  
+ AlphaDelete_AguaConsciente            : 1   d70: 9   1st Qu.: 5.00  
+ Ariel1990_first_app                   : 1   d90: 3   Median : 9.50  
+ B-H-M_Parcel-Sender-MERN              : 1   o  :43   Mean   :14.82  
+ BigCatMr_SwiftCat                     : 1   o50: 9   3rd Qu.:20.00  
+ Blazingsonic_firecode-work-in-progress: 1   o70:25   Max.   :80.00  
+ (Other)                               :94   u  : 8                  
+      outD              nb             nob         
+ Min.   :  0.00   Min.   :   23   Min.   :    3.0  
+ 1st Qu.:  1.00   1st Qu.:   95   1st Qu.:   54.0  
+ Median :  7.00   Median :  241   Median :  141.5  
+ Mean   : 22.66   Mean   : 1031   Mean   :  823.4  
+ 3rd Qu.: 19.00   3rd Qu.:  525   3rd Qu.:  390.2  
+ Max.   :244.00   Max.   :34434   Max.   :31275.0  
+
+ 
+quantile(x$inD[selAL],90:100/100)
+   90%    91%    92%    93%    94%    95%    96%    97%    98%    99%   100% 
+    50     55     62     70     81     95    115    146    200    318 157323 
+quantile(x$outD[selAL],90:100/100)
+     90%      91%      92%      93%      94%      95%      96%      97% 
+      10       12       14       17       20       25       33       47 
+     98%      99%     100% 
+      77      176 18660102 
+
+quantile(xL$inD[selLL],90:100/100)
+    90%    91%    92%    93%    94%    95%    96%    97%    98%    99%   100% 
+    13     14     15     17     19     21     25     29     38     57 156746 
+quantile(xL$outD[selLL],90:100/100)
+   90%    91%    92%    93%    94%    95%    96%    97%    98%    99%   100% 
+    11     13     15     18     21     26     33     43     61     95 209624 
+
+
+selLH = selLL & (xL$outD > 95 | xL$inD > 57)
+selH = selAL & (x$outD > 176 | x$inD > 318)
+hSample = sample(as.character(x$prj[selH]),100)
+hLSample = sample(as.character(xL$prj[selLH]),100)
+write(hSample,file="hSample",ncol=1)
+write(hLSample,file="hLSample",ncol=1)
+write(Sample,file="Sample",ncol=1)
+write(LSample,file="LSample",ncol=1)
+
+summary(xL[match(hLSample,xL$prj),])
+                                prj      type         inD        
+ ARCANEDEV_Support                : 1   d  : 4   Min.   :  0.00  
+ Andry85_prostositevnua2019       : 1   d70: 9   1st Qu.: 21.00  
+ Asad24_me                        : 1   d90: 7   Median : 61.00  
+ Brew8it_Twitter-SA-Project       : 1   o  :32   Mean   : 63.25  
+ CadiDadi_crypto-portfolio-tracker: 1   o50:13   3rd Qu.: 86.25  
+ CarlosjRuiz_guia_practica        : 1   o70:21   Max.   :298.00  
+ (Other)                          :94   u  :14                   
+      outD             nb               nob         
+ Min.   :  0.0   Min.   :   33.0   Min.   :    0.0  
+ 1st Qu.: 15.5   1st Qu.:  444.5   1st Qu.:  153.8  
+ Median : 78.0   Median : 1395.5   Median :  495.0  
+ Mean   :100.1   Mean   : 3847.3   Mean   : 2764.3  
+ 3rd Qu.:135.0   3rd Qu.: 3696.8   3rd Qu.: 1601.5  
+ Max.   :751.0   Max.   :81027.0   Max.   :80172.0  
+
+summary(x[match(hSample,x$prj),])
+                    prj      type         inD              outD         
+ 1079107009_MyAndroid : 1   d  : 6   Min.   :   0.0   Min.   :    0.00  
+ 790396054_zhbj74     : 1   d70:26   1st Qu.:  56.5   1st Qu.:    5.75  
+ AlexCout_Turretz     : 1   d90:24   Median : 339.0   Median :  200.50  
+ AlexisFinn_linux-home: 1   o  : 4   Mean   : 333.3   Mean   :  670.83  
+ Aliis_testpage1K     : 1   o50: 9   3rd Qu.: 488.5   3rd Qu.:  331.00  
+ Ant97_MissionSupport : 1   o70:18   Max.   :1332.0   Max.   :14703.00  
+ (Other)              :94   u  :13                                      
+       nb               nob          
+ Min.   :     28   Min.   :     7.0  
+ 1st Qu.:   1058   1st Qu.:   187.5  
+ Median :   7532   Median :   951.0  
+ Mean   :  19946   Mean   : 11117.1  
+ 3rd Qu.:  15433   3rd Qu.:  2080.0  
+ Max.   :1042247   Max.   :919854.0  
+
+for i in LSample hLSample; do head -10 $i; done | gzip > selL
+for i in Sample hSample; do head -10 $i; done | gzip > sel
+(cat fP2PStatsT.Pstats.csv | ~/lookup/grepField.perl sel 1; cat fP2LPStatsT.Pstats.csv|  ~/lookup/grepField.perl selL 1)|sort -R
+cat smp1 | python3 query.py
+
+#most projects very short duration
+#get projects with 10+ active months
+python3 query1.py > ManyMonthsActive
+lsort 10G -t\; -k1,1 ManyMonthsActive |join -t\; - <(zcat /data/basemaps/gz/fP2PStatsT.Pstats | lsort 100G -t\; -k1,1) >  ManyMonthsActive.Pstats 
+lsort 10G -t\; -k1,1 ManyMonthsActive |join -t\; - <(zcat /data/basemaps/gz/fP2LPStatsT.Pstats | lsort 100G -t\; -k1,1) >  ManyMonthsActiveL.Pstats 
+
+y=read.table("ManyMonthsActive.Pstats", sep=";",quote="",comment.char="")
+nn1 = c("prj", "na", "nc", "nCore", "nMnth", "m0", "mn", "gen", "type", "inD", "outD", "nb","nob");
+names(y)=nn1
+> summary(y)
+                      prj                na                  nc          
+ 0--key_0--key.github.io:      1   Min.   :     1.00   Min.   :      10  
+ 0--key_lib             :      1   1st Qu.:     2.00   1st Qu.:      66  
+ 0--key_org-pub         :      1   Median :     3.00   Median :     130  
+ 0-0-0-_StellarKit      :      1   Mean   :    12.02   Mean   :     651  
+ 0-0MrLonely_SourceCode :      1   3rd Qu.:     7.00   3rd Qu.:     294  
+ 0-1-0_twistock         :      1   Max.   :134271.00   Max.   :31610821  
+ (Other)                :2107482   NA's   :3064                          
+     nCore              nMnth               m0                mn         
+ Min.   :    1.00   Min.   :  10.00   2018-03:  28007   2021-02: 277603  
+ 1st Qu.:    1.00   1st Qu.:  11.00   2018-10:  27658   2021-01: 175150  
+ Median :    1.00   Median :  15.00   2018-01:  27399   2021-03: 147578  
+ Mean   :    3.73   Mean   :  20.89   2019-03:  27371   2020-12: 118282  
+ 3rd Qu.:    2.00   3rd Qu.:  23.00   2019-01:  26732   2020-11:  63768  
+ Max.   :68872.00   Max.   :1304.00   2017-03:  26636   2020-10:  62138  
+ NA's   :3021                         (Other):1943685   (Other):1262969  
+     gen           type              inD                outD          
+       :1800080   d  :  10967   Min.   :     0.0   Min.   :      0.0  
+ female: 307408   d70:  95753   1st Qu.:     4.0   1st Qu.:      1.0  
+                  d90:  39317   Median :    12.0   Median :      4.0  
+                  o  :1179453   Mean   :    41.5   Mean   :    201.7  
+                  o50: 177404   3rd Qu.:    33.0   3rd Qu.:     17.0  
+                  o70: 490019   Max.   :133630.0   Max.   :2302297.0  
+                  u  : 114575                                         
+       nb                nob          
+ Min.   :       1   Min.   :       0  
+ 1st Qu.:     170   1st Qu.:     134  
+ Median :     441   Median :     341  
+ Mean   :    3128   Mean   :    2247  
+ 3rd Qu.:    1319   3rd Qu.:     937  
+ Max.   :36998066   Max.   :36821950  
+
+yL=read.table("ManyMonthsActiveL.Pstats", sep=";",quote="",comment.char="")
+names(yL)=nn1
+summary(yL)
+                      prj                na                  nc          
+ 0--key_0--key.github.io:      1   Min.   :     1.00   Min.   :      10  
+ 0--key_lib             :      1   1st Qu.:     2.00   1st Qu.:      66  
+ 0--key_org-pub         :      1   Median :     3.00   Median :     130  
+ 0-0-0-_StellarKit      :      1   Mean   :    12.02   Mean   :     649  
+ 0-0MrLonely_SourceCode :      1   3rd Qu.:     7.00   3rd Qu.:     294  
+ 0-1-0_twistock         :      1   Max.   :134271.00   Max.   :31610821  
+ (Other)                :2106836   NA's   :3060                          
+     nCore              nMnth               m0                mn         
+ Min.   :    1.00   Min.   :  10.00   2018-03:  28002   2021-02: 277598  
+ 1st Qu.:    1.00   1st Qu.:  11.00   2018-10:  27646   2021-01: 175146  
+ Median :    1.00   Median :  15.00   2018-01:  27390   2021-03: 147576  
+ Mean   :    3.73   Mean   :  20.89   2019-03:  27358   2020-12: 118271  
+ 3rd Qu.:    2.00   3rd Qu.:  23.00   2019-01:  26725   2020-11:  63762  
+ Max.   :68872.00   Max.   :1304.00   2017-03:  26631   2020-10:  62127  
+ NA's   :3017                         (Other):1943090   (Other):1262362  
+     gen           type              inD                outD          
+       :1799454   d  :   7101   Min.   :    0.00   Min.   :     0.00  
+ female: 307388   d70:  30199   1st Qu.:    2.00   1st Qu.:     1.00  
+                  d90:  12107   Median :    5.00   Median :     4.00  
+                  o  :1582586   Mean   :   13.47   Mean   :    28.95  
+                  o50:  94710   3rd Qu.:   12.00   3rd Qu.:    16.00  
+                  o70: 329764   Max.   :91557.00   Max.   :209627.00  
+                  u  :  50375                                         
+       nb                nob          
+ Min.   :       1   Min.   :       0  
+ 1st Qu.:     153   1st Qu.:     134  
+ Median :     389   Median :     341  
+ Mean   :    2601   Mean   :    2245  
+ 3rd Qu.:    1081   3rd Qu.:     937  
+ Max.   :36995595   Max.   :36821950  
+
+yL[yL$nMnth==1304,]
+                                prj na    nc nCore nMnth      m0      mn gen
+202318 IPDSnelting_velcom-test-repo  3 84861     1  1304 1979-12 2088-07    
+       type inD outD nb nob
+202318  o70   0    0 28  27
+
+max( yL[yL$nMnth!=1304,"nMnth"])
+[1] 1093
+yL[yL$nMnth==1093,]
+                             prj na     nc nCore nMnth      m0      mn gen type
+959326 fcharlie_git-analyze-demo  3 265830     2  1093 2009-12 2100-12      o70
+       inD outD  nb nob
+959326  13   53 858 746
+
+dim(yL[yL$nMnth>240,]);
+[1] 608  13
+
+selyLL = yL$nb>20
+selyAL = y$nb>20
+
+quantile(y$inD[selyAL],0:10/10)
+    0%    10%    20%    30%    40%    50%    60%    70%    80%    90%   100% 
+     0      1      3      5      8     12     18     26     43     86 133630 
+
+quantile(y$outD[selyAL],0:10/10)
+      0%     10%     20%     30%     40%     50%     60%     70%     80%     90% 
+      0       0       0       1       2       4       7      12      25      78 
+   100% 
+2302297 
+
+quantile(yL$inD[selyLL],0:10/10)
+   0%   10%   20%   30%   40%   50%   60%   70%   80%   90%  100% 
+    0     0     1     2     3     5     7    10    15    28 91557 
+
+quantile(yL$outD[selyLL],0:10/10)
+    0%    10%    20%    30%    40%    50%    60%    70%    80%    90%   100% 
+     0      0      0      1      2      4      7     12     23     58 209627 
+
+ySample = sample(as.character(y$prj[selyAL]),100)
+yLSample = sample(as.character(yL$prj[selyLL]),100)
+
+selyL = selyLL & (yL$outD > 15 | yL$inD > 23)
+selyA = selyAL &  (y$outD > 78 | y$inD > 86)
+hySample = sample(as.character(y$prj[selyA]),100)
+hyLSample = sample(as.character(yL$prj[selyL]),100)
+write(hySample,file="hySample",ncol=1)
+write(hyLSample,file="hyLSample",ncol=1)
+write(ySample,file="ySample",ncol=1)
+write(yLSample,file="yLSample",ncol=1)
+for i in yLSample hyLSample; do head -10 $i; done | gzip > selyL
+for i in ySample hySample; do head -10 $i; done | gzip > sely
+(cat fP2PStatsT.Pstats.csv | ~/lookup/grepField.perl sely 1; cat fP2LPStatsT.Pstats.csv|  ~/lookup/grepField.perl selyL 1)|sort -R > smpy
+cat smpy | python3 query.py
+
+
+#network of repos that share 20+blobs at a time
+base=fP2PStatsT
+zcat /data/basemaps/gz/$base.s | awk -F\; '{if ($1!=$8 && $7>20 )print $0}' |gzip > $base.20+
+zcat  $base.20+|cut -d\; -f1 |uniq -c |lsort 100G -rn |head
+1398003 nakiostudio_Youtube-Downloader
+1228434 wujun0919_remote
+1075051 QQ986945193_david_hexo_blog
+ 960731 lijinhai255_nodeBasic
+ 932881 LokenderSarna_catharsis15
+
+zcat  $base.20+|cut -d\; -f8 |uniq -c |lsort 100G -rn |head
+   8115 Mattlk13_metacpan-cpan-extracted
+   6483 gitlab.com_atoomic_CPAN
+   6271 barryclark_jekyll-now
+   5402 drupal_drupal
+   5001 AmartyaU_WordPress
+   4858 TheMattSykes_personal-website
+   4825 Jackeagle_kernel_msm-3.18
+
+#what is being shared
+LICENSE
+
+
+2215_he-said-she-said.github.io;1038;1038;0;5933;d;597072;744;gitlab.com_bmcorser_pars;4
+2215_he-said-she-said.github.io;1038;1038;0;5933;d;597072;744;gitlab.com_bmcorser_pars;4
+udacity_frontend-nanodegree-resume;0;4037;0;9187;d70;582183;147218;Kottans_frontend-2019-homeworks;46
+udacity_frontend-nanodegree-resume;0;4037;0;9187;d70;582183;147218;Kottans_frontend-2019-homeworks;46
+frioux_dotfiles;0;1391;0;14007;d90;635860;61600;skeept_dotvim;2944
+Adude11_-tmp-100000-commit-2;0;154;0;41556;d70;50000;13570;yangyimeng_test;13570
+
+
+
+# means to identify infrastructure (define infrastructure types) - tools to 
+# compare from dependencies based infrastructure
+# Arun code reuse four types - why
+# copy is fine grained: allows excluding unneeded functionality
+
+Add to Prj summaries
++Blob-Linked projects b2B b2b 
++NOriginal blobs P2nfb
+LICENSE
+zcat fP2PStatsT.StrongReuseLinks011-1.crank.map | awk -F\; '{print $2";"$1}' | lsort 100G | gzip > B2bFullT.s
+zcat B2bFullT.s|join -t\; - <(zcat B2bFullT.s)|gzip > B2BFullT.s
+
+Add to Auth summaries 
+community?
+
+
+#Deblobing
+time perl getType1.perl | gzip > fP2PStatsT.s
+time perl getType1.perl | gzip > fP2LPStatsT.s
+time perl getType1.perl | gzip > fP2SLPStatsT.s
+time perl getType1.perl | gzip > fP2SPStatsT.s
+zcat fP2SLPStatsT.s | cut -d\; -f1-6 | uniq | gzip > fP2SLPStatsT.Pstats
+zcat fP2LPStatsT.s | cut -d\; -f1-6 | uniq | gzip > fP2LPStatsT.Pstats
+zcat fP2SPStatsT.s | cut -d\; -f1-6 | uniq | gzip > fP2SPStatsT.Pstats
+zcat fP2PStatsT.s | cut -d\; -f1-6 | uniq | gzip > fP2PStatsT.Pstats
+
+#by type
+for sel in "" S L
+do zcat fP2${sel}PStatsT.Pstats | awk -F\; '{ t[$2]++; if($5>20)t20[$2]++; if($5>10)t10[$2]++; if($5>5)t5[$2]++;} END{for (i in t)print i,t[i],t5[i],t10[i],t20[i]; }'&
+done
+
+SL
+typ all       5+         10+      20+
+  o 40711544 24542551 18767869 13831864
+o70  9836186  7936200  6645830  5294805
+o50  4308962  4308962  3276940  1245493
+  u  1966488  1490827  1158141   851447
+d70  1528038  1107076   882440   694167
+d90   638849   638849   490091   380130
+  d  3676685  1392425  1111324   809000
+
+L  
+  o 48564010 30232023 24674903 19869258
+o70 20103794 16615451 14193532 11492055
+o50  7895500 7895500   6294897  2644786
+  u  3129304 2528510   2106049  1662689
+d70  2154602 1721170   1451796  1189351
+d90   892436 892436     722867   571906
+d    3429407 1348216   1185651   918449
+
+S
+o   18787138 10964502  9030870 7613857
+o70 15305134 11208933  9085628 7376845
+o50  9081051  9081051  6789467 3157348
+u    5703360  4523251  3754207 2959300
+d70  5035339  3917862  3340136 2727922
+d90  2873749  2873749  2404938 2004529
+d   15969710  5363680  4581397 3586242
+
+Full  
+o   24488920 13303031 10917881  9334732
+o70 22070677 16670002 14431268 12692143
+o50 13940010 13940010 11358591  6333512
+d70  7872040  6709140  6127959  5458384
+d90  3829321  3829321  3482630  3113294
+d    8209126  3274916  3032055  2557025
+Does not add up to 89M
+
+#blobs not shared
+for sel in "" S L
+do zcat fP2${sel}PStatsT.Pstats | awk -F\; '{i++;if ($5> 10)i10++; if ($5> 20)i20++;if ($5> 5)i5++;if ($3+$4>0){is++;if ($5> 10)is10++; if ($5> 20)is20++;if ($5> 5)is5++;}}END {print "1+|"i"|"is"|"is/i; print "5+|"i5"|"is5"|"is5/i5; print "10+|"i10"|"is10"|"is10/i10;print "20+|"i20"|"is20"|"is20/i20}'&
+done
+   
+SL
+Size|Total    |with sharing|fraction
+1+  |62666752 |31550488    |0.503465
+5+  |41416890 |25338451    |0.61179
+10+ |32332635 |21430142    |0.662802
+20+ |23106906 |16524634    |0.715138
+
+L
+1+  |86169053 |55978578    |0.649637
+5+  |61233306 |47880688    |0.781939
+10+ |50629695 |42015385    |0.829857
+20+ |38348494 |33618084    |0.876647
+
+S # few blogs account for a lot of connectivity
+1+  |72755481 |60784594    |0.835464
+5+  |47933028 |43397088    |0.905369
+10+ |38986643 |36229075    |0.929269
+20+ |29426043 |27951977    |0.949906
+
+Full
+1+  |89450504 |74491883    |0.832772
+5+  |65542299 |60932347    |0.929664
+10+ |56297593 |53780036    |0.955281
+20+ |45389449 |44217596    |0.974182
+
+
+zcat /data/basemaps/gz/$base.s |  cut -d\; -f1,8  | perl ~/bin/connectBasic.perl $base |gzip > $base.map
+zcat $base.map|cut -d\; -f2 |lsort 100G |uniq -c |lsort 10G -rn |head
+base=fP2PStatsT 73261916/89450504=.82
+base=fP2SLPStatsT 26854991/62666752=.43
+base=fP2LPStatsT 51945572/86169053=.60
+base=fP2SPStatsT 59936632/72755481=.82
+
+export LD_LIBRARY_PATH=/home/audris/lib64:/home/audris/lib:/home/audris/src/networkit/build
+zcat $base.versions | /home/audris/src/networkit/cluster $(zcat $base.names|wc -l) | gzip > $base.PLM
+#modularity=0.703689 nver=89450504 clusters=15484535 largest=10400230
+
+zcat $base.PLM | perl rankNew.perl $base 1 | gzip > $base.crank.map
+base=fP2SLPStatsT
+zcat /data/basemaps/gz/$base.s | awk -F\; '{if ($1!=$8 && $7/$5 > 0.1 && $7/$12 > .1 && $7 >= $14 && $7>3)print $0}' |gzip > $base.StrongReuseLinks01-3
+base=$base.StrongReuseLinks01-3
+zcat $base |  cut -d\; -f1,8  | perl ~/bin/connectBasic.perl $base |gzip > $base.map
+zcat $base.versions | /home/audris/src/networkit/cluster $(zcat $base.names|wc -l) | gzip > $base.PLM
+# modularity=0.999662 nver=5275622 clusters=1690692 largest=24923
+zcat $base.PLM | perl rankNew.perl $base 1 | gzip > $base.crank.map
+grep cran_urca <(zcat $base.crank.map)
+-frbl_vars;cran_urca;0.029802
+-Cran_vars;cran_urca;0.029802
++salsa.debian.org_edd_r-cran-urca;cran_urca;0.029802
+-cheaton_vars2;cran_urca;0.029802
+-cosname_rfinance;cran_urca;0.029802
++cran_urca;cran_urca;0.029802
++rforge_urca;cran_urca;0.029802
+-rforge_vars;cran_urca;0.029802
++bwlewis_urca;cran_urca;0.029802
+
+base=fP2SLPStatsT
+zcat /data/basemaps/gz/$base.s | awk -F\; '{if ($1!=$8 && $7/$5 > 0.13 && $7/$12 > .13 && $7 >= $14 && $7>3)print $0}' |gzip > $base.StrongReuseLinks01-10
+base=$base.StrongReuseLinks013-3
+zcat $base |  cut -d\; -f1,8  | perl ~/bin/connectBasic.perl $base |gzip > $base.map
+zcat $base.versions | /home/audris/src/networkit/cluster $(zcat $base.names|wc -l) | gzip > $base.PLM
+# modularity=0.999931 nver=4574893 clusters=1540281 largest=9386
+
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.018294
+bwlewis_urca;cran_urca;0.018294
+rforge_urca;cran_urca;0.018294
+cran_urca;cran_urca;0.018294
+
+
+frbl_vars;Cran_vars;0.018294
+cheaton_vars2;Cran_vars;0.018294
+Cran_vars;Cran_vars;0.018294
+rforge_vars;Cran_vars;0.018294
+
+
+
+python3 grabGen.py > cs540vals
+(cut -d\, -f2,3 ~/course/cs540-21/bigdata/bv_namsor_ethnicity_2_0_10.csv| sed 's|,| |' | tr '[A-Z]' '[a-z]'| lsort 5G -u -t\; -k1,1  | join -t\; -v1 as.fl.u as.fl.ns > as.fl.u.miss
+awk '{if(length($1)>1 && length($2)>1){print $0}}' as.fl.u.miss | lsort 1G -R > as.fl.u.miss.long
+
+
+base=fP2SLPStatsT
+zcat /data/basemaps/gz/$base.s | awk -F\; '{if ($1!=$8 && $7/$5 > 0.12 && $7/$12 > .12 && $7 >= $14 && $7>0)print $0}' |gzip > $base.StrongReuseLinks012-0
+#modularity=0.999205 nver=9674252 clusters=2750968 largest=50532
+
+base=fP2SLPStatsT
+zcat /data/basemaps/gz/$base.s | awk -F\; '{if ($1!=$8 && $7/$5 > 0.11 && $7/$12 > .11 && $7 >= $14 && $7>0)print $0}' |gzip > $base.StrongReuseLinks011-0
+#modularity=0.999034 nver=10351252 clusters=2863192 largest=56649
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.013158
+cran_urca;cran_urca;0.013158
+rforge_urca;cran_urca;0.013158
+bwlewis_urca;cran_urca;0.013158
+
+base=fP2PStatsT
+zcat /data/basemaps/gz/$base.s | awk -F\; '{if ($1!=$8 && $7/$5 > 0.11 && $7/$12 > .11 && $7 >= $14 && $7>3)print $0}' |gzip > $base.StrongReuseLinks011-3
+#modularity=0.976502 nver=12546288 clusters=1935992 largest=762318
+
+grep cran_urca <(zcat $base.crank.map)
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000005
+cran_urca;cran_urca;0.000005
+bwlewis_urca;cran_urca;0.000005
+rforge_urca;cran_urca;0.000005
+60d7d529a95e:/data/play/forks>grep Cran_vars <(zcat $base.crank.map)                                                                                                                                                                                                                                                      
+Cran_vars;Cran_vars;0.000005
+cheaton_vars2;Cran_vars;0.000005
+rforge_vars;Cran_vars;0.000005
+frbl_vars;Cran_vars;0.000005
+
+base=fP2PStatsT
+zcat /data/basemaps/gz/$base.s | awk -F\; '{if ($1!=$8 && $7/$5 > 0.11 && $7/$12 > .11 && $7 >= $14 && $7>1)print $0}' |gzip > $base.StrongReuseLinks011-1
+base=$base.StrongReuseLinks011-1
+#modularity=0.980753 nver=14313409 clusters=2306614 largest=768584
+rforge_urca;cran_urca;0.000005
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000005
+bwlewis_urca;cran_urca;0.000005
+cran_urca;cran_urca;0.000005
+
+
+##Woc Update, May 9 ########################################################
+Highlights:
+- Five hackathon write-ups + one+ MSR paper at MSR 21 
+https://2021.msrconf.org/track/msr-2021-technical-papers?track=MSR%20Hackathon
+
+- Version T was collected based on updates/new repositories identified on Feb 12, 2021, and the git objects
+have been retrieved by Mar 16. Over 14M new/updated repos were identified and new data exceeded 35TB.
+
+- This required internal changes to the database organization among the servers.
+
+- More attributes in project/author summaries stored in mongodb
+
+- Developer communities based on authors working on the same projects.
+
+- Prototype of additional deforking based on blobs shared among projects.
+
+- License spelled out (forced by the interest from industry)
+
+
+Details
+
+Almost 300M commits and 1.2B trees were added over these five months. There were over 52M distinct author IDs.
+Of them, 1,029,324 were for organizations, used by more than one author, or had insufficient information for
+actual author identification. From the remaining 51,326,297 author IDs 35,288,533 distinct authors were identified.
+Of the 146M distinct repos 89,840,664 were not clones or forks of others. Using prototype blob-based deforking
+this drops the total of independent repos by 10M to 80M. 
+
+In addition to commit-based deforking a prototype blob-based deforking has been implemented. This brings down the
+number of independent repositories to 
+
+Number 	type
+10457708737 	blob
+2595586645 	commit
+10687786993 	tree
+20216545 	tag
+146138675 	projects (distinct repositories)
+52355621 	author IDs
+
+
+Version T - big changes
+
+Fully incorporated da5 (1.3TB RAM 120TB HDD 38TB SSD). Had to re-arranged databases as
+blobs no longer fit on a single server.
+
+More attributes in project/author summaries: monthly activity, core team, ...
+
+Developer communities were created by detecting communities of developers who work together on
+projects based developer/project bi-graph. 
+
+A prototype deforking based on blob sharing was introduced. Apart from a much larger number of blobs
+(than commits or authors) the blob to project graph connects 90% of projects into a single cluster.
+The filtering of edges based on the direction and extent of blob reuse in addition to community detection
+were needed to get an approximate clustering into independent project clusters - these projects do not share
+commits. 
+###########################################################
+
+
+#old wactd_javase-demo;wactd_javase-demo;0;0;2;2;1;1;1;1;o;o;20;19;19;19;20;19;wactd_javase-demo
+#new diogom42_d4jdata;o;2;5;303;301;1;rwang63_Arbitrage-Finder;o70;13;0;51;38;0
+
+#this is a more general sharing through commits that create some blobs
+zcat PnbFullT.s|wc -l
+89450504
+zcat PnbFullT.s|awk -F\; '{if ($2> 10)i10++; if ($2> 20)i20++;if ($2> 5)i5++;}END {print i5,i10,i20}'
+65542299 56297593 45389449
+zcat P2fP4FullT.Pstats | awk -F\; '{ if ($3>1||$5>1)ns++}END{print ns}'
+74491883
+
+Total   |with sharing
+89450504|74491883
+65542299|60932347
+56297593|53780036
+45389449|44217596
+
+#by type
+zcat P2fP4FullT.Pstats | awk -F\; '{ t[$6]++; if($7>20)t20[$6]++; if($7>10)t10[$6]++; if($7>5)t5[$6]++;} END{for (i in t)print i,t[i],t5[i],t10[i],t20[i]; }'
+typ all       5+         10+      20+
+o   24488920 13303031 10917881  9334732
+o70 22070677 16670002 14431268 12692143
+o50 13940010 13940010 11358591  6333512
+u    9040410  7815879  6947209  5900359
+d70  7872040  6709140  6127959  5458384
+d90  3829321  3829321  3482630  3113294
+d    8209126  3274916  3032055  2557025
+
+zcat P2fP4FullT.Pstats | awk -F\; '{ if (($3>5||$5>5)&&$7>20)ns++}END{print ns}'
+34357558
+
+##################################################################
+#no blobs removed
+###############################################
+
+base=P2fP4FullT.StrongReuseLinks009-0
+#modularity=0.960104 nver=26952831 clusters=3080825 largest=2674717
+#26952831
+cran_urca;cran_urca;0.000001
+rforge_urca;cran_urca;0.000001
+bwlewi s_urca;cran_urca;0.000001
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000001
+#bad
+cran_aaSEA;ajbt200128_Attendance-System;0.156510
+cran_blrm;Unipisa_test_git_old_dates;1.000001
+cran_ggamma;Unipisa_test_git_old_dates;1.000001
+cran_mcBFtest;Unipisa_test_git_old_dates;1.000001
+
+#w modularity=0.854355 nver=26952831 clusters=3060858 largest=8468787
+cran_urca;cran_urca;0.000001
+rforge_urca;cran_urca;0.000001
+bwlewis_urca;cran_urca;0.000001
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000001
+
+
+#bad
+base=P2fP4FullT.StrongReuseLinks008-1
+#w
+#modularity=0.837854 nver=18594745 clusters=2546876 largest=1450086
+cheaton_vars2;cran_urca;0.000006
+cran_urca;cran_urca;0.000006
+bwlewis_urca;cran_urca;0.000006
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000006
+rforge_vars;cran_urca;0.000006
+Cran_vars;cran_urca;0.000006
+rforge_urca;cran_urca;0.000006
+frbl_vars;cran_urca;0.000006
+
+#modularity=0.971306 nver=18594745 clusters=2548118 largest=1128437
+zcat $base.crank.map|grep cran_urca
+cheaton_vars2;cran_urca;0.000006
+cran_urca;cran_urca;0.000006
+bwlewis_urca;cran_urca;0.000006
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000006
+rforge_vars;cran_urca;0.000006
+Cran_vars;cran_urca;0.000006
+rforge_urca;cran_urca;0.000006
+frbl_vars;cran_urca;0.000006
+
+#bad: BUT SHOWS WHERE IT IS CONVERGING TO
+base=P2fP4FullT.StrongReuseLinks007-4
+#w modularity=0.820646 nver=16345637 clusters=2001156 largest=1682233
+zcat ${base}w.crank.map|grep Cran_vars
+cheaton_vars2;Cran_vars;0.000008
+cran_urca;Cran_vars;0.000008
+cosname_rfinance;Cran_vars;0.000008
+bwlewis_urca;Cran_vars;0.000008
+salsa.debian.org_edd_r-cran-urca;Cran_vars;0.000008
+rforge_vars;Cran_vars;0.000008
+Cran_vars;Cran_vars;0.000008
+rforge_urca;Cran_vars;0.000008
+frbl_vars;Cran_vars;0.000008
+
+#modularity=0.956035 nver=16345637 clusters=2002752 largest=1128358
+zcat $base.crank.map|grep cran_urca
+cran_urca;Cran_vars;0.000008
+cheaton_vars2;Cran_vars;0.000008
+cran_urca;Cran_vars;0.000008
+cosname_rfinance;Cran_vars;0.000008
+bwlewis_urca;Cran_vars;0.000008
+salsa.debian.org_edd_r-cran-urca;Cran_vars;0.000008
+rforge_vars;Cran_vars;0.000008
+Cran_vars;Cran_vars;0.000008
+rforge_urca;Cran_vars;0.000008
+frbl_vars;Cran_vars;0.000008
+
+
+#bad
+base=P2fP4FullT.StrongReuseLinks005-5
+#modularity=0.936698 nver=17502650 clusters=1914171 largest=1366398
+zcat $base.crank.map|grep cran_urca
+cheaton_vars2;cran_urca;0.000011
+cran_urca;cran_urca;0.000011
+cosname_rfinance;cran_urca;0.000011
+bwlewis_urca;cran_urca;0.000011
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000011
+rforge_vars;cran_urca;0.000011
+Cran_vars;cran_urca;0.000011
+githubfun_trading;cran_urca;0.000011
+polinas123_vars;cran_urca;0.000011
+rforge_urca;cran_urca;0.000011
+frbl_vars;cran_urca;0.000011
+
+#bad
+base=P2fP4FullT.StrongReuseLinks005-3
+#modularity=0.944905 nver=21021539 clusters=2146760 largest=1422192
+zcat $base.crank.map|grep cran_urca             
+cheaton_vars2;cran_urca;0.000009
+cran_urca;cran_urca;0.000009
+cosname_rfinance;cran_urca;0.000009
+bwlewis_urca;cran_urca;0.000009
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000009
+rforge_vars;cran_urca;0.000009
+Cran_vars;cran_urca;0.000009
+githubfun_trading;cran_urca;0.000009
+polinas123_vars;cran_urca;0.000009
+rforge_urca;cran_urca;0.000009
+frbl_vars;cran_urca;0.000009
+
+#real bad
+base=P2fP4FullT.StrongReuseLinks001-1
+#modularity=0.881736 nver=37219897 clusters=2055694 largest=2850681
+cran_urca;zkan_ml-class-2011;0.010918
+
+
+
+base=P2fP4FullT.StrongReuseLinks013-3
+#modularity=0.981177 nver=10690866 clusters=1796640 largest=543534
+cran_socceR;oddnoc_oddnoc.github.io;0.028821
+cran_aaSEA;ajbt200128_Attendance-System;0.446403
+
+base=P2fP4FullT.StrongReuseLinks011-3
+#modularity=0.976504 nver=12546288 clusters=1935954 largest=762300
+
+#good
+base=P2fP4FullT.StrongReuseLinks01-10
+#modularity=0.962836 nver=9946152 clusters=1379003 largest=794267
+zcat $base.crank.map|grep cran_urca
+cran_urca;cran_urca;0.000006
+rforge_urca;cran_urca;0.000006
+bwlewis_urca;cran_urca;0.000006
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000006
+
+da5:/data/play/forks>zcat $base.crank.map|grep Cran_vars
+rforge_vars;Cran_vars;0.000006
+Cran_vars;Cran_vars;0.000006
+cheaton_vars2;Cran_vars;0.000006
+frbl_vars;Cran_vars;0.000006
+
+#good
+base=P2fP4FullT.StrongReuseLinks01-5
+#modularity=0.969525 nver=12188240 clusters=1757833 largest=804473
+cran_urca;cran_urca;0.000005
+rforge_urca;cran_urca;0.000005
+bwlewis_urca;cran_urca;0.000005
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000005
+
+#good
+base=P2fP4FullT.StrongReuseLinks01-3
+#modularity=0.972874 nver=13539286 clusters=1998490 largest=804600
+cran_urca;cran_urca;0.000004
+rforge_urca;cran_urca;0.000004
+bwlewis_urca;cran_urca;0.000004
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000004
+
+rforge_vars;Cran_vars;0.000004
+Cran_vars;Cran_vars;0.000004
+cheaton_vars2;Cran_vars;0.000004
+frbl_vars;Cran_vars;0.000004
+
+#good
+base=P2fP4FullT.StrongReuseLinks01-1
+zcat /data/basemaps/gz/$base | cut -d\; -f15 |gzip > $base.weights
+#modularity=0.977579 nver=15450546 clusters=2383483 largest=805010
+cran_urca;cran_urca;0.000004
+rforge_urca;cran_urca;0.000004
+bwlewis_urca;cran_urca;0.000004
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000004
+
+#w modularity=0.865542 nver=15450546 clusters=2382562 largest=776147
+zcat ${base}w.crank.map|grep Cran_vars
+rforge_vars;Cran_vars;0.000004
+Cran_vars;Cran_vars;0.000004
+cheaton_vars2;Cran_vars;0.000004
+frbl_vars;Cran_vars;0.000004
+da5:/data/play/forks>zcat ${base}w.crank.map|grep cran_urca
+cran_urca;cran_urca;0.000004
+rforge_urca;cran_urca;0.000004
+bwlewis_urca;cran_urca;0.000004
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000004
+
+base=P2fP4FullT.StrongReuseLinks01-0
+#modularity=0.963971 nver=24011881 clusters=2975268 largest=2314248
+#w modularity=0.865948 nver=24011881 clusters=2957358 largest=7140109
+cran_urca;cran_urca;0.000001
+rforge_urca;cran_urca;0.000001
+bwlewis_urca;cran_urca;0.000001
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000001
+
+
+#good - use u as reference, but need to separate large:
+base=P2fP4FullT.StrongReuseLinks009-1
+# how to fix ekstroem_socceR and cran_aaSEA: first copied some fonts
+#cran_aaSEA;rohitchandrashekar_cran-package;0;0;1;6;2;0;2;2;o;d70;72;72;66;0;129;25;;0
+#modularity=0.974726 nver=17137840 clusters=2475038 largest=1063056
+#17137840
+cran_urca;cran_urca;0.000004
+rforge_urca;cran_urca;0.000004
+bwlewis_urca;cran_urca;0.000004
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000004
+
+cran_iq;ndsol_volcano;0.009685#need to separate
+cran_socceR;jmandel_jmandel.github.io;0.027642#need to separate
+cran_aaSEA;ajbt200128_Attendance-System;0.559323#need to separate
+
+
+#w modularity=0.851943 nver=17137840 clusters=2474072 largest=992599
+#17137840
+cran_urca;cran_urca;0.000004
+rforge_urca;cran_urca;0.000004
+bwlewis_urca;cran_urca;0.000004
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000004
+
+
+
+#####################################
+# Only code blobs are tracked
+base=P2SfP4FullT.StrongReuseLinks013-3
+#modularity=0.865994 nver=16468864 clusters=1351953 largest=1575364
+
+
+base=P2SfP4FullT.StrongReuseLinks005-0
+#modularity=0.825861 nver=47677535 clusters=1022173 largest=9372528
+
+base=P2SfP4FullT.StrongReuseLinks009-3
+#modularity=0.948164 nver=6533043 clusters=943348 largest=583918
+#6533043
+zcat ${base}.crank.map| grep cran_urca
+#good and only one bad:cran_aaSEA
+cran_urca;cran_urca;0.000005
+rforge_urca;cran_urca;0.000005
+bwlewis_urca;cran_urca;0.000005
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.000005
+
+cran_LogicOpt;synthemesc_espresso;0.000036
+cran_iq;ndsol_volcano;0.010715 #toshikurauchi_eyeswipe cran_iq share
+a bunch of math functions: SparseLUImpl.h MathFunctions.h SparseDenseProduct.h
+cran_aaSEA;ajbt200128_Attendance-System;0.683965
+
+
+base=P2SfP4FullT.StrongReuseLinks013-3
+#modularity=0.957997 nver=4178341 clusters=706298 largest=442965
+#looses  bwlewis_urca
+
+#wrst ar so-so
+cran_iq;reaperhui_CyberSystem_Old;0.007569
+cran_aaSEA;ajbt200128_Attendance-System;0.403054
+####################
+base=P2SfP4FullT.StrongReuseLinks009-3
+#modularity=0.948164 nver=6533043 clusters=943353 largest=583918
+#6533043
+#gains bwlewis_urca
+#wrst ar so-so
+cran_iq;ndsol_volcano;0.010715
+cran_aaSEA;ajbt200128_Attendance-System;0.683965
+####################
+
+
+base=P2SfP4FullT.StrongReuseLinks009-0
+#modularity=0.922403 nver=12552042 clusters=1335909 largest=2474981
+#12552042
+#more wrsr
+cran_bayest;ciyanogen_ciyanogen;0.099325
+cran_ggpointdensity;ciyanogen_ciyanogen;0.099325
+cran_aaSEA;ajbt200128_Attendance-System;0.143641
+cran_blrm;Unipisa_test_git_old_dates;1.000000
+cran_mcBFtest;Unipisa_test_git_old_dates;1.000000
+
+base=P2SfP4FullT.StrongReuseLinks008-3
+#modularity=0.942653 nver=7320733 clusters=1012249 largest=803247
+#7320733
+#wrst ar so-so
+cran_iq;ndsol_volcano;0.010865
+cran_aaSEA;ajbt200128_Attendance-System;0.759528
+
+
+base=P2SfP4FullT.StrongReuseLinks007-3
+#modularity=0.939079 nver=8454123 clusters=1081411 largest=843746
+#8454123
+#bad, mixes in Cran_vars
+cran_urca;Cran_vars;0.000010
+#wrst get worse
+cran_Rcpp;ndsol_volcano;0.010775
+cran_iq;ndsol_volcano;0.010775
+cran_aaSEA;ajbt200128_Attendance-System;0.827969
+
+
+#################################################
+#################################################
+#Most Conservative!!!! ONLY code blobs used in fewer than 100 Ps 
+#too restrictive?
+base=P2SSfP4FullT.StrongReuseLinks013-3
+#modularity=0.999993 nver=1853085 clusters=717811 largest=346
+zcat ${base}.crank.map| grep cran_urca 
+#looses  bwlewis_urca
+cran_urca;cran_urca;0.014185
+rforge_urca;cran_urca;0.014185
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.014185
+
+#worst pretty good
+cran_rgl;dmurdoch_rgl;0.021379
+cran_vegan;vegandevs_vegan;0.021379
+cran_prodlim;rforge_eventhistory;0.021429
+cran_QRM;bpfaff_FRAPO;0.028474
+cran_EcoHydRology;mlt_swat;0.035824
+
+
+
+base=P2SSfP4FullT.StrongReuseLinks008-2
+#modularity=0.999982 nver=3220610 clusters=1180930 largest=3038
+#3220610
+cran_nametagger;scignscape_kauv-rz;0.058417
+cran_EcoHydRology;hawklorry_swat;0.098469
+cran_LogicOpt;synthemesc_espresso;0.129174
+
+
+base=P2SSfP4FullT.StrongReuseLinks008-1 
+#modularity=0.999985 nver=3624722 clusters=1318164 largest=3306
+#3624722
+cran_nametagger;scignscape_kauv-rz;0.058417
+cran_EcoHydRology;hawklorry_swat;0.098469
+cran_LogicOpt;synthemesc_espresso;0.129174
+
+#choose this
+base=P2SSfP4FullT.StrongReuseLinks008-0
+#4705944
+#modularity=0.999941 nver=4705944 clusters=1602831 largest=4896
+zcat ${base}.crank.map| grep cran_urca
+cran_urca;cran_urca;0.019356
+rforge_urca;cran_urca;0.019356
+bwlewis_urca;cran_urca;0.019356
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.019356
+
+#wrst great:
+cran_nametagger;scignscape_kauv-rz;0.058417
+cran_EcoHydRology;hawklorry_swat;0.098469
+cran_LogicOpt;synthemesc_espresso;0.129174
+
+#rest bad
+
+base=P2SSfP4FullT.StrongReuseLinks007-3
+#modularity=0.999970 nver=3252981 clusters=1177751 largest=4453
+#3252981
+#bad, mixes in Cran_vars
+cran_urca;Cran_vars;0.038305
+
+base=P2SSfP4FullT.StrongReuseLinks005-3
+#modularity=0.999906 nver=4056149 clusters=1401330 largest=8254
+#4056149
+#bad...
+cheaton_vars2;cran_urca;0.050728
+cran_urca;cran_urca;0.050728
+cosname_rfinance;cran_urca;0.050728
+bwlewis_urca;cran_urca;0.050728
+salsa.debian.org_edd_r-cran-urca;cran_urca;0.050728
+rforge_vars;cran_urca;0.050728
+Cran_vars;cran_urca;0.050728
+githubfun_trading;cran_urca;0.050728
+polinas123_vars;cran_urca;0.050728
+rforge_urca;cran_urca;0.050728
+frbl_vars;cran_urca;0.050728
+
+base=P2SSfP4FullT.StrongReuseLinks005-0
+#modularity=0.999749 nver=6972326 clusters=2194036 largest=16288
+#not worth checking
+
+
+
+
+base=P2SSfP4FullT.StrongReuseLinks001-1
+#modularity=0.995126 nver=10903476 clusters=2615113 largest=129856
+#bad
+cran_urca;gitlab.com_conradsnicta_armadillo-code;0.421947
+
+base=P2SSfP4FullT.StrongReuseLinks003-1
+#modularity=0.999684 nver=7111406 clusters=2203582 largest=21758
+bad and bad
+cran_urca;cran_urca;0.041208
+...
+
+cran_PamBinaries;fotlogo_cv10;0.568654
+cran_fastcluster;fotlogo_cv10;0.568654
+cran_rTRNG;DeeHants_liveMedia;0.977680
+
+
+
+
+####################################################
+
+zcat /data/basemaps/gz/$base | grep ';[ou];[oud];' | cut -d\; -f1,2 | perl ~/bin/connectBasic.perl ${base}o | gzip > ${base}o.map &
+zcat ${base}o.versions | /home/audris/src/networkit/cluster $(zcat ${base}o.names|wc -l) | gzip > ${base}o.PLM
+zcat ${base}o.PLM | perl rankNew.perl ${base}o 1 | gzip > ${base}o.crank.map
+zcat ${base}o.crank.map|grep '^cran_' | grep -v ';[cC]ran_'|lsort 1G -t\; -k3 -n
+#o modularity=0.974226 nver=16697182 clusters=2386354 largest=1034920
+#Still an issue
+cran_iq;ndsol_volcano;0.009685
+cran_socceR;oddnoc_oddnoc.github.io;0.022010
+cran_aaSEA;ajbt200128_Attendance-System;0.559323
+
+
+
+
+#perhaps too long?
 
 # newest attempt after removing 18f5b0ceecb87delgh:e152g2014.11.21002dudadaejannco_addons-server
 da5
@@ -291,9 +2016,24 @@ zcat c2pFullS.np2pw.PLMmap.forks | cut -d\; -f2 |lsort 50G -t\; | uniq -c | lsor
   43803 0077cc_gitignore
 
 #############################
+c=10
+zcat P2PFullS.nb2b.$c.s | perl connectExportVw.perl P2PFullS.nb2b.$c 
+zcat P2PFullS.nb2b.$c.versions | paste  -d\   - <(zcat P2PFullS.nb2b.$c.weights) >  P2PFullS.nb2b.$c.csv 
+cat P2PFullS.nb2b.$c.csv | /home/audris/src/networkit/clusterw $(zcat /data/P2PFullS.nb2b.$c.names|wc -l) $(zcat /data/P2PFullS.nb2b.$c.weights|wc -l) | gzip > /data/P2PFullS.nb2bw.$c.PLM
+modularity=0.968289 nver=15508231 clusters=1236002 largest=836106
+zcat P2PFullS.nb2bw.$c.PLM | perl rankNew.perl P2PFullS.nb2b.$c 1 | gzip >  P2PFullS.nb2bw.$c.crank.map
+zcat P2PFullS.nb2b.$c.versions|ssh da3 "bin/connect" | gzip > P2PFullS.nb2b.$c.clones
+zcat P2PFullS.nb2b.$c.clones | cut -d\; -f2 | lsort 30G | uniq -c | lsort 1G -rn | head -20
+perl getComponent.perl  P2PFullS.nb2b.$c P2PFullS.nb2bw.$c.PLM 0 > P2PFullS.nb2bw.$c.0.forOSLO
+time /home/audris/src/OSLOM2/oslom_undir -f /data/play/forks/P2PFullS.nb2b.$c.0.csv -hint  /data/play/forks/P2PFullS.nb2bw.$c.0.forOSLO -w -r 1 -hr 1
+
+
+c=2000
+
 #do blob sharing where blobs are for programming languages and of at least certain size (450 char long)
 zcat P2PFullS.nb2b.2000.s | perl connectExportVw.perl P2PFullS.nb2b.2000 
-paste -d\  <(zcat /data/P2PFullS.nb2b.2000.versions) <(zcat /data/P2PFullS.nb2b.2000.weights) | /home/audris/src/networkit/clusterw $(zcat /data/P2PFullS.nb2b.2000.names|wc -l) $(zcat /data/P2PFullS.nb2b.2000.weights|wc -l) | gzip > /data/P2PFullS.nb2bw.2000.PLM
+zcat P2PFullS.nb2b.2000.versions | paste  -d\   - <(zcat P2PFullS.nb2b.2000.weights) >  P2PFullS.nb2b.2000.csv 
+cat P2PFullS.nb2b.2000.csv | /home/audris/src/networkit/clusterw $(zcat /data/P2PFullS.nb2b.2000.names|wc -l) $(zcat /data/P2PFullS.nb2b.2000.weights|wc -l) | gzip > /data/P2PFullS.nb2bw.2000.PLM
 #modularity=0.792458 nver=30128959 clusters=2805378 largest=6652122
 zcat P2PFullS.nb2bw.2000.PLM | perl rankNew.perl P2PFullS.nb2b.2000 1 | gzip >  P2PFullS.nb2bw.2000.crank.map  
 zcat P2PFullS.nb2b.2000.versions|ssh da3 "bin/connect" | gzip > P2PFullS.nb2b.2000.clones
@@ -302,30 +2042,94 @@ zcat P2PFullS.nb2b.2000.clones | cut -d\; -f2 | lsort 30G | uniq -c | lsort 1G -
    4181 97898
    1992 78
     940 84
-zcat P2PFullS.nb2b.2000.versions | paste  -d\   - <(zcat P2PFullS.nb2b.2000.weights) >  P2PFullS.nb2b.2000.csv 
+
 perl getComponent.perl  P2PFullS.nb2b.2000 P2PFullS.nb2bw.2000.PLM 0 > P2PFullS.nb2bw.2000.0.forOSLO
 time /home/audris/src/OSLOM2/oslom_undir -f /data/play/forks/P2PFullS.nb2b.2000.0.csv -hint  /data/play/forks/P2PFullS.nb2bw.2000.0.forOSLO -w -r 1 -hr 1
+
+#crashes, do weight 2+
+grep -v ' 1$' P2PFullS.nb2b.2000.csv > P2PFullS.nb2b.2000.2p.csv
+awk '{print $1, $2}' P2PFullS.nb2b.2000.2p.csv | ssh da3 "bin/connect" | gzip > P2PFullS.nb2b.2000.2p.clones
+zcat P2PFullS.nb2b.2000.2p.clones|cut -d\; -f2 | lsort 30G | uniq -c | lsort 1G -rn | head -20
+7232201 5
+    578 11720465
+    553 16626863
+    402 9530741
+    
+cat P2PFullS.nb2b.2000.2p.csv | /home/audris/src/networkit/clusterw $(zcat /data/P2PFullS.nb2b.2000.names|wc -l) $(zcat /data/P2PFullS.nb2b.2000.weights|wc -l) | gzip > /data/P2PFullS.nb2bw.2000.2p.PLM
+#modularity=0.910744 nver=30128959 clusters=21187215 largest=748110
+perl getComponent.perl P2PFullS.nb2b.2000.2p P2PFullS.nb2bw.2000.2p.PLM 5 > P2PFullS.nb2bw.2000.2p.5.forOSLO
+time /home/audris/src/OSLOM2/oslom_undir -f /data/play/forks/P2PFullS.nb2b.2000.2p.5.csv -hint  /data/play/forks/P2PFullS.nb2bw.2000.2p.5.forOSLO -w -r 1 -hr 1
+***************************************************************************
+CHECK UNIONS AND SIMILAR MODULES DONE
+******** module_collection ******** 34 modules. writing... 
+DONE   ****************************
+pruning all the modules collected. Partitions found: 1
+getting partition from tp-file: /data/play/forks/P2PFullS.nb2b.2000.2p.5.csv_oslo_files/partitions_level_4
+34 groups found
+34 bss found
+checking homeless nodes
+writing final solution in file /data/play/forks/P2PFullS.nb2b.2000.2p.5.csv_oslo_files/short_tp4
+******** module_collection ******** 34 modules. writing... 
+DONE   ****************************
+hierarchies done ********* 
+
+real    84519m14.303s
+user    83321m34.916s
+sys     995m46.387s
+
+
+
+#no need to recode, works on original ids
+#cat P2PFullS.nb2b.2000.2p.5.csv | perl connectExportW.perl P2PFullS.nb2b.2000.2p.5
+#zcat P2PFullS.nb2b.2000.2p.5.versions | paste  -d\   - <(zcat P2PFullS.nb2b.2000.2p.5.weights) >  P2PFullS.nb2b.2000.2p.5recoded.csv 
+#time /home/audris/src/OSLOM2/oslom_undir -f /data/play/forks/P2PFullS.nb2b.2000.2p.5recoded.csv -w -r 1 -hr 1
 
 # do blob knowledge flow where blobs are for programming languages and of at least certain size (450 char long)
 # and the next commiter is at least 30 days later
 zcat A2AFullS.nfb.30.s | perl connectExportW.perl A2AFullS.nfb.30
-zcat A2AFullS.nfb.30.versions | paste  -d\   - <(zcat A2AFullS.nfb.30.weights) >  A2AFullS.nfb.30.csv
+zcat A2AFullS.nfb.30.versions | paste  -d\  - <(zcat A2AFullS.nfb.30.weights) >  A2AFullS.nfb.30.csv
 cat A2AFullS.nfb.30.csv | /home/audris/src/networkit/clusterw $(zcat /data/A2AFullS.nfb.30.names|wc -l) $(cat /data/A2AFullS.nfb.30.csv|wc -l) | gzip > /data/A2AFullS.nfbw.30.PLM
-cat A2AFullS.nfb.30.csv | /home/audris/src/networkit/clusterwd $(zcat /data/A2AFullS.nfb.30.names|wc -l) $(cat /data/A2AFullS.nfb.30.csv|wc -l) | gzip > /data/A2AFullS.nfbwd.30.PLM
-#modularity=0.644839 nver=12128613 clusters=86041 largest=4167545
+#modularity=0.656848 nver=11980180 clusters=87615 largest=3103190
 zcat A2AFullS.nfbw.30.PLM | perl rankNew.perl A2AFullS.nfb.30 1 | gzip >  A2AFullS.nfbw.30.crank.map  
+zcat A2AFullS.nfbw.30.crank.map|cut -d\; -f2 | lsort 30G | uniq -c | lsort 1G -rn | head
+3103190 ralp-sms <wyred.innovations@gmail.com>
+2128103 tea9 <shaomiaom@sina.com>
+1046593 Anurag <ajsanuragjain@gmail.com>
+ 902132 Nathanaël <nathanael.spriet@gmail.com>
+ 732357 adedayo2017 <maxistinlove@gmail.com>
+ 642663 zertosh <zertosh@gmail.com>
+ 479082 JOLY Clement <clement.joly@telecomnancy.eu>
+ 334570 Oskar Hane <oh@oskarhane.com>
+ 327431 Unity Technologies <@unity.com>
+ 317151 WataruSUzuki <wataru0406@gmail.com>
+
 zcat A2AFullS.nfb.30.versions|ssh da3 "bin/connect" | gzip > A2AFullS.nfb.30.clones
 zcat A2AFullS.nfb.30.clones | cut -d\; -f2 | lsort 30G | uniq -c | lsort 1G -rn | head -20
-11942602 0
-    199 5677
-    131 6422
-     76 16373
-     48 288
-     36 33782
+11788641 0
+    199 5857
+    131 6619
+     76 16845
 perl getComponent.perl A2AFullS.nfb.30 A2AFullS.nfbw.30.PLM 0 > A2AFullS.nfbw.30.0.forOSLO
-time /home/audris/src/OSLOM2/oslom_undir -f /data/play/forks/A2AFullS.nfb.30.0.csv -hint  /data/play/forks/A2AFullS.nfbw.30.0.forOSLO -w -r 1 -hr 1
+time /home/audris/src/OSLOM2/oslom_dir -f /data/play/forks/A2AFullS.nfb.30.0.csv -hint  /data/play/forks/A2AFullS.nfbw.30.0.forOSLO -w -r 1 -hr 1
 
 
+zcat A2AFullS.nfb.0.s | perl connectExportW.perl A2AFullS.nfb.0
+zcat A2AFullS.nfb.0.versions | paste  -d\ - <(zcat A2AFullS.nfb.0.weights) >  A2AFullS.nfb.0.csv
+cat A2AFullS.nfb.0.csv | /home/audris/src/networkit/clusterw $(zcat /data/A2AFullS.nfb.30.names|wc -l) $(cat /data/A2AFullS.nfb.30.csv|wc -l) | gzip > /data/A2AFullS.nfbw.30.PLM
+
+zcat A2AFullS.nfb.30.s |cut -d\; -f2 |lsort 130G |uniq -c | lsort 1G -rn |head
+2695980  <cinnabar@git>
+1288126 Nathanaël <nathanael.spriet@gmail.com>
+1152753 springsw <web@springsw.com>
+1038209 gituser <git@gituser.com>
+ 987231 a <986945193@QQ.com>
+ 985800 ralp-sms <wyred.innovations@gmail.com>
+ 897800 lijinhai255 <18854109500@163.com>
+ 870039 chuchuyun <happydays0509@gmail.com>
+ 854262 Anurag <ajsanuragjain@gmail.com>
+ 804587 Andreas Amsenius <andreas@amsenius.se>
+
+ 
 #############################  
 export LD_LIBRARY_PATH=/home/audris/src/networkit/build
 c=2000
@@ -395,22 +2199,107 @@ perl getComponent.perl P2AFullS.nA2AP.$c P2AFullS.nA2APw.$c.PLM 0 > forOSLOP.0
 perl getComponent.perl P2AFullS.nA2AP.$c P2AFullS.nA2APw.$c.PLM 376697 > forOSLOP.376697
 
 c=2000  
-time /home/audris/src/OSLOM2/oslom_undir -f /data/play/forks/P2AFullS.nA2AP.$c.0.csv -hint forOSLOP.0 -w -r 1 -hr 1
 time /home/audris/src/OSLOM2/oslom_undir -f /data/play/forks/P2AFullS.nA2AP.$c.376697.csv -hint forOSLOP.376697 -w -r 1 -hr 1
+
+time /home/audris/src/OSLOM2/oslom_undir -f /data/play/forks/P2AFullS.nA2AP.$c.0.csv -hint forOSLOP.0 -w -r 1 -hr 1
+***************************************************************************
+CHECK UNIONS AND SIMILAR MODULES DONE
+******** module_collection ******** 203 modules. writing... 
+DONE   ****************************
+pruning all the modules collected. Partitions found: 1
+getting partition from tp-file: /data/play/forks/P2AFullS.nA2AP.2000.0.csv_oslo_files/partitions_level_4
+203 groups found
+203 bss found
+checking homeless nodes
+writing final solution in file /data/play/forks/P2AFullS.nA2AP.2000.0.csv_oslo_files/short_tp4
+******** module_collection ******** 208 modules. writing... 
+DONE   ****************************
+hierarchies done ********* 
+real    38641m57.425s
+user    37641m54.580s
+sys     747m20.501s
+
+cat P2AFullS.nA2AP.$c.0.csv_oslo_files/tp | perl rankNewO.perl P2AFullS.nA2AP.${c} P2AFullS.nA2APw.$c.PLM | gzip >  P2AFullS.nA2APOw.${c}.0.crank.map
+perl ./toGdfO.perl P2AFullS.nA2APOw.${c}.0.crank.map P2AFullS.nA2AP.${c}.names P2AFullS.nA2AP.$c.0.csv 0 > PP0.0.gdf
+cat P2AFullS.nA2AP.${c}.0.csv_oslo_files/tp | perl ./toGdfOC.perl P2AFullS.nA2APOw.${c}.0.crank.map P2AFullS.nA2AP.${c}.names P2AFullS.nA2AP.${c}.0.csv > PPcmnt.gdf 
+#investigate the results
+zcat P2AFullS.nA2APOw.${c}.0.crank.map|wc -l
+15340747
+zcat P2AFullS.nA2APOw.${c}.0.crank.map|cut -d\; -f2|lsort 50G -t\; -u | wc -l
+883939
+zcat P2AFullS.nA2APOw.${c}.0.crank.map|cut -d\; -f2|lsort 50G | uniq -c | lsort 5G -rn | head -20 >top20
+head top20
+  28659 Tomster <tomster@emberjs.com>
+   7934 CarusoGabriel <carusogabriel34@gmail.com>
+   7710 Robin Stocker <robin@nibor.org>
+   7653 cmr <corey@octayn.net>
+   7420 Steve <shade@chemlab.org>
+   7322 pascal <pascal@borreli.com>
+   7065 onovy <novy@ondrej.org>
+   6349 a <Luca@Milanesio.org>
+   6326 Fred Zirdung <fred@hackreactor.com>
+   5644 edward <edward@4angle.com>
+
+sed 's|^\s*[0-9]* ||'  top20 | while IFS=\; read i; do zcat P2AFullS.nA2APOw.${c}.0.crank.map |grep ";$i\$" | cut -d\; -f1 | ~/lookup/getValues -f A2P |cut -d\; -f2 | lsort 20G -t\; -k1,1 | perl $HOME/bin/grepFieldv.perl PManyA2000.gz 1 |uniq -c |lsort 1G -rn |head -10 > $j.0; j=$((j+1));done
+head 0.0
+    564 0cool321_ember.js
+    480 1123456789011_data
+    436 0xadada_ember-cli
+    394 04th0809_website
+    235 Acidburn0zzz_guides-1
+    215 0xadada_ember-simple-auth
+    215 0000marcell_ember-cli-mirage
+    173 Alonski_guides-source
+    169 0000marcell_ember-power-select
+    164 22a_ember-template-lint-next-line
+head 1.0
+    501 php_doc-en
+    491 013cbr_FOSUserBundle
+    465 php-doc_en
+    464 0mars_SonataAdminBundle
+    398 00577_PHPExcel
+    388 00F100_composer
+    341 20uf_http-foundation
+    330 3mg_DoctrineExtensions
+    262 php_doc-base
+    256 0mars_serializer
+head 2.0
+   1292 bitbucket.org_fusiontestaccount_fusion-renaissance-testing
+    989 bitbucket.org_fusiontestaccount_ed-repo
+    804 bitbucket.org_fusiontestaccount_rrv2-testing
+    660 bitbucket.org_fusiontestaccount_fusiontest2
+    603 fusiontestaccount_fusedsl
+    337 bitbucket.org_fusiontestaccount_support-readiness
+    208 bitbucket.org_mrdon_atlassian-plugins
+    196 fusiontestaccount_afouad-repo2
+    194 bitbucket.org_200ok_aui
+    187 bitbucket.org_atlassian_atlassian-streams
+head 3.0
+    514 AdamDang_community
+    457 000s_https-everywhere
+    450 07mehmet0_origin
+    422 01deyishu_ingress-nginx
+    387 Ark-kun_test-infra
+    387 AmitRoushan_cloud-provider-openstack
+    386 1235gopalt_openshift-ansible
+    338 115100_kops
+    313 BrandWang_API
+    307 06094051_prometheus
+
 
 # layout/embed: use ICSE embeddings/create new
 python3 ./convert.py --format weighted_edgelist /data/P2AFullS.nA2A.2000.0.csv /data/P2AFullS.nA2AP.2000.0.bcsr  
 ./verse-weighted -input /data/P2AFullS.nA2AP.2000.0.bcsr -output /data/P2AFullS.nA2AP.2000.csv.0.bin
+Calculations took 6359170.50 s to run
+real    105986m28.939s
+user    96640m48.335s
+sys     8954m10.519s
 #look at 376697?
 
 #try second largest disconnected set
 cat P2AFullS.nA2AP.$c.376697.csv_oslo_files/tp | perl rankNewO.perl P2AFullS.nA2AP.${c} P2AFullS.nA2APw.$c.PLM | gzip >  P2AFullS.nA2APOw.${c}.376697.crank.map
 perl ./toGdfO.perl P2AFullS.nA2APOw.2000.376697.crank.map P2AFullS.nA2AP.2000.names P2AFullS.nA2AP.$c.376697.csv 0 > 376697.0.gdf
 
-#calculate graphs for the largest set 
-cat P2AFullS.nA2AP.$c.0.csv_oslo_files/tp | perl rankNewO.perl P2AFullS.nA2AP.${c} P2AFullS.nA2APw.$c.PLM | gzip >  P2AFullS.nA2APOw.${c}.0.crank.map
-perl ./toGdfO.perl P2AFullS.nA2APOw.2000.0.crank.map P2AFullS.nA2AP.2000.names P2AFullS.nA2AP.$c.0.csv 0 > P0.0.gdf
-cat P2AFullS.nA2AP.2000.0.csv_oslo_files/tp | perl ./toGdfOC.perl P2AFullS.nA2AOw.2000.0.crank.map P2AFullS.nA2A.2000.names P2AFullS.nA2A.2000.0.csv > Pcmnt.gdf 
 
 
 #investigate Leuwen first
@@ -491,108 +2380,7 @@ zcat P2AFullS.nA2APw.2000.PLM | perl toGdf.perl P2AFullS.nA2APw.2000.crank.map P
 
 
 perl toPajek.perl P2AFullS.nA2AP.$c.names P2AFullS.nA2AP.2000.376697.csv > 376697.net
-#TODO remove: add to findHomonyms.perl from connectExportVw.perl + modify {a2A,A2a}fullHS.s 
-devops <devops@gmail@com>
-venudevops <devops@gmail.com>
-9tdevops <devops@gmail.com>
-devops <devops@gmail.com>
-David <David@David-PC>
-Tu Nombre <you@example.com>
-vagrant <vagrant@scotchbox>
-Instant Contiki <user@instant-contiki.(none)>
-Mary <mary.example@rypress.com>
-Your Name <youremail@domain.com>
-Home <Home@Home-PC>
-vagrant <vagrant@ironhack>
-training_C2D.02.11 <training_C2D.02.11@accenture.com>
-Author Name <email@address.com>
-name <you@example.com>
-Live session user <ubuntu@ubuntu.(none)>
-DataWorks-CI <48289519+DataWorks-CI@users.noreply.github.com>
-Travis CI <contact@loicortola.com>
-user <user@user>
-unknown <Daniel@.(none)>
-Training_H2A.03.20 <Training_h2a.03.20@accenture.com>
-user <user@user.com>
-user1 <user1@user1-PC>
-Travis-CI <travis@travis>
-I <info@remcotolsma.nl>
-ubuntu <ubuntu@ubuntu.(none)>
-apple <apple@appledeiMac.local>
-apple <apple@apples-MacBook-Pro.local>
-Logon Aluno <logonrmlocal@fiap.com.br>
-VSC <vscavu@microsoft.com>
-Demo User <demouser@MacBook-Air.local>
-vagrant <vagrant@vagrant-centos65.vagrantup.com>
-iyuto <dev@code-check.io>
-devops <devops@gmail.com>  
-Azure Pages <donotreply@microsoft.com>
-jserv <jserv@0xlab.org>
-Automated Version Bump <gh-action-bump-version@users.noreply.github.com>
-user <user@ubuntu.(none)>
-Mac <mac@Macs-MacBook-Pro.local>
-Utilisateur <user@debian.arcahe.ovh>
-macbook <macbook@macbooks-MacBook-Pro.local>
-Demo User <demouser@MacBook-Pro.local>
-javascript-ru <47786167+jsru@users.noreply.github.com>
-Apprentice <apprentice@devbootcamp.com>
-Alex <alex@Alexs-MacBook-Pro.local>
- <anonymous@github.com>
-OWASPFoundation <owasp.foundation@owasp.org>
-unknown <drdynscript@gmail.com>
-Vagrant Default User <vagrant@jessie.vagrantup.com>
-Usuario <Usuario@Usuario-PC>
-yourusername <your@email.com>
-ASUS <ASUS@ASUS-PC>
-John Doe <john@doe.org>
-Plusieurs textes <email>
-pkage <pkage@mit.edu>
-Usuario Local <Usuario Local>
-source_server <source_server@example.com>
-NullDev <NL-Dev@yandex.com>
-Alibaba OSS <opensource@alibaba-inc.com>
-apple <apple@appledeMacBook-Pro.local>
-oscreader <oscreader@OSC>
-user <user@debian>
-buddy <buddy@buddy.works>
-pg <vagrant@packer-debian-7.4-amd64>
-User <user@Users-MacBook-Pro.local>
-lenovo <lenovo@lenovo-PC>
-FIRST_NAME LAST_NAME <MY_NAME@example.com>
-pi <pi@raspberrypi>
-ubuntu <ubuntu@ubuntu>
-mac <mac@macdeMacBook-Pro.local>
-Xcode User <xcode@Fasts-MacBook-Pro-2.local>
-apple <apple@apples-MacBook-Pro-2.local>
-UCloud_Docs <49426641+UCloudDocs@users.noreply.github.com>
-student <student@iMac-student.local>
-user <user@mail.com>
-rails-dev <rails-dev@railsdev-VirtualBox.(none)>
-mac <mac@macdeMacBook-Air.local>
-MacBook <macbook@MacBook-Pro-MacBook.local>
-mac <mac@macs-MacBook-Air.local>
-Name <user@example.com>
-Server <server@server.com>
-info <info@ralfw.de>
-student <none@none.com>
-unknown <Jason@.(none)>
-A Happy User <auser@nothing.none>
-codefactor-io <support@codefactor.io>
-Travis CI <travis@Traviss-Mac-6.local>
-Postman Integration <integration@postman.com>
-user <user@DESKTOP-V882PTR>
-A U Thor <author@example.com>
-unknown <user@.(none)>
-acer <acer@boss>
-unknown <User@.(none)>
-Bj <none@example.com>
-- <anybody@ttuwiki.org>
-sbx_user1051 <sbx_user1051@169.254.156.1>
-Test test (testtest) <noreply@example.com>
-bot50 <bot50@users.noreply.github.com>
-gituser <git@gituser.com>
 
-################
 zcat P2AFullS.nA2Aw.$c.crank.map | cut -d\; -f2 | /home/audris/bin/lsort 20G | uniq -c | /home/audris/bin/lsort 1G -rn | head -20
 2003031  <ash@kambanaria.org>
  455463 --global <tomas.vot@gmail.com>
@@ -731,7 +2519,7 @@ cat 53.10 <mabedin1@stuy.edu>
 # community of clusters induced by developer participation in projects    
 zcat P2AFullS.nA2Aw.2000.PLM|perl toGdf.perl P2AFullS.nA2Aw.2000.crank.map P2AFullS.nA2A.2000.names P2AFullS.nA2A.2000.csv > P2AFullS.nA2A.2000CMT.gdf
 
-# Use Lewen as input for much more accurate OSLOM
+# Use Leuwen as input for much more accurate OSLOM
 zcat P2AFullS.nA2Aw.$c.PLM|perl -e '$i=0;while(<STDIN>){chop();($c,$w)=split(/;/);$cl{$c}{$i}++;$i++};while(($k,$v)=each %cl){@a=keys %$v;print "@a\n";}' > forOSLO
 time /home/audris/src/OSLOM2/oslom_undir -f /data/play/forks/P2AFullS.nA2A.$c.csv -hint forOSLO -w -r 1 -hr 1
 ***************************************************************************
