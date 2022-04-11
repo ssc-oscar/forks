@@ -187,7 +187,52 @@ zcat diomidis.s |wc
 zcat merged2.s|wc
 8157317
 ```
+#########################################################
+# group commits into cliques/find root/head for each clique
+#########################################################
+for i in {0..127}
+do zcat /da?_data/basemaps/gz/c2datFullU$i.s
+done | cut -d\; -f1,6|sed 's|:|;|g' | perl ~/lookup/connectExportCmt.perl cmtsU
+zcat cmtsU.versions | ~/src/networkit/components $n -1 0 | gzip > cmtsU.root
+zcat cmtsU.versions | ~/src/networkit/components $n -1 1 | gzip > cmtsU.head
+
+zcat cmtsU.root|paste -d\; - <(zcat cmtsU.head)| perl -e '$i=0;open A, "zcat cmtsU.names|";while(<A>){chop();tr/[A-Z]/[a-z]/;$k=$i%100000000;$l=$i/100000000;$n[$l][$k]=pack "H*",$_;$i++;print STDERR "read $i\n" if !($i%100000000);};while(<STDIN>){chop();($a,$p,$r,$dr,$b,$p1,$h,$dh)=split(/;/);die "$a;$b;$p;$p1\n" if ($a != $b || $p !=$p1); $k=$a%100000000;$l=$a/100000000;$aa=unpack "H*",$n[$l][$k];$k=$r%100000000;$l=$r/100000000;$rr=unpack "H*",$n[$l][$k];$k=$h%100000000;$l=$h/100000000;$hh=unpack "H*",$n[$l][$k];print "$aa;$rr;$dr;$hh;$dh;$p\n"}' | ~/lookup/splitSec.perl c2rhFullU 32
+
+#########################################################
+#Group blobs based on bb2cf
+#########################################################
+for i in {0..127}
+do zcat bhistnetI$i.s
+done | perl ~/lookup/connectExportCmtBin.perl bhistnet
+cat bhistnet.names|perl -e '$i=1;while(!eof(STDIN)){ $b="";read(STDIN,$b,20);$a=unpack "H*",$b;print "$i;$a\n";$i++}'|tail -1
+6753799091;75239550b02973fdf5cae31b26d43f66e642a4a2
+
+zcat bhistnet.versions | ~/lookup/Ber2Link.perl  | ~/src/networkit/componentsOnly $n  | gzip > bhistnet.components
+n=6753799091
+zcat bhistnet.components| cut -d\; -f2 | lsort 400G | uniq -c | awk '{if ($1>1000)print $2";"$1}'|gzip > bhistnet.components.large         
+#without filterin on ob size
+237687626 14
+1770448 2974
+1319821 172
+1192571 2204
+1168512 2819
+
+
+zcat bhistnet.components | perl -e 'open A, "bhistnet.names";while(<STDIN>){chop();($id,$cl)=split(/;/);seek(A,$id*20,0);$b="";read(A,$b,20);$bh=unpack "H*",$b;print "$bh;$cl\n"}' | gzip > b2component.gz
+zcat b2component.gz|perl -e 'open A, "zcat bhistnet.components.large|";while(<A>){chop();($id,$n)=split(/;/);$get{$id}=$n;}while(<STDIN>){chop();($id,$cl)=split(/;/);if(defined $get{$cl}){print "$id;$cl;$get{$cl}\n"}}' | gzip > largeBHist.gz
+
+
+#########################################################
 #defork
+#########################################################
+ver=U
+zcat c2pFull$ver.np2p.s | perl connectExportVw.perl c2pFull$ver.np2p
+export LD_LIBRARY_PATH=/home/audris/lib64:/home/audris/lib:/home/audris/src/networkit/build
+zcat c2pFull$ver.np2p.versions | /home/audris/src/networkit/cluster $(zcat c2pFull$ver.np2p.names|wc -l)  | gzip > c2pFull$ver.np2pu.PLM
+modularity=0.943885 nver=121455498 clusters=11837465 largest=476728
+zcat c2pFull$ver.np2pu.PLM | perl rankNew.perl c2pFull$ver.np2p 1 | gzip >  c2pFull$ver.np2pu.crank.map
+zcat c2pFull$ver.np2pu.crank.map | awk -F\; '{if ($2 != $1)print $1";"$2 }' | gzip >  c2pFull$ver.np2pu.PLMmap.forks
+
 ver=T
 zcat c2pFull$ver.np2p.s | perl connectExportVw.perl c2pFull$ver.np2p
 zcat c2pFull$ver.np2p.versions | paste  -d\   - <(zcat  c2pFull$ver.np2p.weights) | gzip > c2pFull$ver.np2p.vw
@@ -202,7 +247,129 @@ modularity=0.939244 nver=103612951 clusters=9966309 largest=625309
 zcat c2pFull$ver.np2pu.PLM | perl rankNew.perl c2pFull$ver.np2p 1 | gzip >  c2pFull$ver.np2pu.crank.map
 zcat  c2pFull$ver.np2pu.crank.map | awk -F\; '{if ($2 != $1)print $1";"$2 }' | gzip >  c2pFull$ver.np2pu.PLMmap.forks
 
-#a2a
+#########################################################
+#a2a based on shared projects
+#########################################################
+zcat P2AFullU.nA2A.200.s|perl connectExportVw1.perl P2AFullU.nA2A.200
+zcat /data/P2AFullU.nA2A.200.versions | /home/audris/src/networkit/cluster $(zcat /data/P2AFullU.nA2A.200.names|wc -l) | gzip >  /data/P2AFullU.nA2A.200.PLM
+paste -d\  <(zcat P2AFullU.nA2A.$c.versions) <(zcat P2AFullU.nA2A.$c.weights) | /home/audris/src/networkit/clusterw $(zcat P2AFullU.nA2A.$c.names|wc -l) $(zcat P2AFullU.nA2A.$c.weights|wc -l) | gzip > P2AFullU.nA2Aw.$c.PLM
+zcat P2AFullU.nA2Aw.$c.PLM | perl rankNew.perl P2AFullU.nA2A.$c 1 | gzip >  P2AFullU.nA2Aw.$c.crank.map
+###Add gender##############################################
+zcat P2AFullU.nA2Aw.200.crank.map| perl -e 'open A, "zcat A2gU.gz|"; while(<A>){chop();($a,$g)=split(/;/);$a2g{$a}=$g;}while(<STDIN>){chop();($a,$r)=split(/;/);print "$r;$a;$a2g{$r};$a2g{$a}\n";}'|lsort 100G -t\; -k1,1 | gzip > P2AFullU.nA2Aw.200.crank.map.G
+zcat P2AFullU.nA2Aw.200.crank.map.G | perl -e 'while(<STDIN>){chop();($r,$a,$gr,$ga)=split(/;/,$_,-1);$cg{$r}{"$gr;$ga"}++;$c{$r}++;} for $r (keys %c){ for $v (keys %{$cg{$r}}){print "$c{$r};$v;$cg{$r}{$v};$r\n"}}' > clGDist
+library(data.table)
+x=read.table("clGDist", sep=";",quote = "",comment.char="")
+sel = x[,1]>10;
+y=x[sel,];
+lf=names(table(as.character(y[y[,3]=='female',5])));
+lm=names(table(as.character(y[y[,3]=='male',5])));
+sel1 = match(as.character(y[,5]),lf,nomatch=0)>0|match(as.character(y[,5]),lm,nomatch=0)>0
+z=y[sel1,]
+zn=data.table("rn"=names(table(as.character(z[,5]))))
+zn$nf=rep(0,dim(zn)[1])
+zn$nm=rep(0,dim(zn)[1])
+zn$n=rep(0,dim(zn)[1])
+sa=match(zn$rn,as.character(z[,5]),nomatch=0)
+zn$n[sa>0]=z[sa,1]
+
+sm=match(zn$rn,as.character(z[z[,3]=='male',5]),nomatch=0)
+sf=match(zn$rn,as.character(z[z[,3]=='female',5]),nomatch=0)
+zn$nm[sm>0]=z[z[,3]=='male',4][sm]
+zn$nf[sf>0]=z[z[,3]=='female',4][sf]
+zn$nt = zn$nf+zn$nm
+zn1=zn[zn$nt>10,]
+zn2=zn1[zn1$nt/zn1$n>.8,]
+names(zn2)
+[1] "rn" "nf" "nm" "nt" "n" 
+write.table(zn2,sep=";",quote=F,row.names=F,col.names=F,file="clGDistA.csv")
+sort -t\; -k1,1 clGDistA.csv|join -t\; - <(zcat P2AFullU.nA2Aw.200.crank.map.G |lsort 100G -t\; -k1,1)
+
+#########################################################
+# P2P based on authors
+#########################################################
+n=A2PFullU.nP2P.200
+zcat $n.s| perl connectExportVw1.perl  $n
+zcat $n.versions | /home/audris/src/networkit/cluster $(zcat $n.names|wc -l) | gzip > ${n}.PLM
+#modularity=0.947280 nver=112903371 clusters=7044185 largest=7112184
+paste -d\  <(zcat $n.versions) <(zcat $n.weights) | /home/audris/src/networkit/clusterw $(zcat $n.names|wc -l) $(zcat $n.weights|wc -l) | gzip > ${n}w.PLM
+#modularity=0.948845 nver=112903371 clusters=7028716 largest=6211219
+zcat ${n}w.PLM | perl rankNew.perl ${n} 1 | gzip >  ${n}w.crank.map
+zcat ${n}w.crank.map|cut -d\; -f2 | lsort 100G | uniq -c | lsort 10G -rn | head -30
+5298440 99designs_aws-vault
+1417662 5l1v3r1_newbie-hacktoberfest
+1038223 Aegisub_Aegisub
+ 989858 AtsushiSakai_PythonRobotics
+ 927346 1ppm_1ppmLog
+ 853919 DaGenix_rust-crypto
+ 842168 App-vNext_Polly
+ 797317 CodeSoom_git-training
+ 690677 GMOD_jbrowse
+ 689126 Anaconda-Platform_anaconda-client
+ 543525 ALMighty_almighty-jobs
+ 478706 Asabeneh_30-Days-Of-React
+ 428683 1uokun_resume
+ 403545 JunichiIto_bonus-drink
+ 378583 DanielG_ghc-mod
+ 351136 2m_scopt
+ 331769 DaoCloud_dao-2048
+ 314183 DesertsP_Valine-Admin
+ 302648 10up_Engineering-Best-Practices
+ 297362 CymChad_BaseRecyclerViewAdapterHelper
+ 292248 1c7_chinese-independent-developer
+ 282825 ApplyBoard_coop-fall-2020-challenge
+ 271052 CSPF-Founder_JavaVulnerableLab
+ 267611 Baseflow_flutter_cache_manager
+ 263823 0nn0_terminal-mac-cheatsheet
+ 259796 GrayStrider_ts-playground
+ 253872 ALPHACamp_simple-twitter-express-starter
+ 253244 17011813_introduction_to_ml_with_python
+ 242764 Adalab_Easley-ejercicios-de-fin-de-semana
+ 237644 HaxorKris_Hackbright
+
+#########################################################
+# P2P based on shared blobs
+#########################################################
+n=P2PFullU.nb2b.100
+zcat $n.s| perl connectExportVw1.perl  $n
+paste -d\  <(zcat $n.versions) <(zcat $n.weights) | /home/audris/src/networkit/clusterw $(zcat $n.names|wc -l) $(zcat $n.weights|wc -l) | gzip > ${n}w.PLM
+#modularity=0.923777 nver=56287572 clusters=2446529 largest=4352864
+zcat ${n}w.PLM | perl rankNew.perl ${n} 1 | gzip >  ${n}w.crank.map
+zcat ${n}w.crank.map|cut -d\; -f2 | lsort 100G | uniq -c | lsort 10G -rn | head -30
+2107083 cdnjs_cdnjs
+1195622 laravel_laravel
+1075258 ARMmbed_DAPLink
+1016348 13269006397_ZhenQute_Web
+ 683300 DLR-SC_repository-synergy
+ 487379 1298698045_react-web
+ 471202 MxJ3lany_ExtractionFiles
+ 436637 0MatheusT_apptcc
+ 433225 CocoaPods_Specs
+ 409242 WordPress_WordPress
+ 351191 Alx100_alx100.github.io
+ 345943 EsotericSoftware_spine-runtimes
+ 330527 ARMmbed_mbed-os
+ 305442 TerryFei_Samples-archive-msdn-community1
+ 293538 EVAyo_script
+ 266495 0377_xinchengexam
+ 258935 rdpeng_ProgrammingAssignment2
+ 238291 1007380462_gatherTong
+ 225155 Ascend_modelzoo
+ 221203 TheMattSykes_personal-website
+ 202438 BVLC_caffe
+ 193310 4shen_webshell
+ 191422 2423971719_Flutter-packages
+ 189598 anlaganlag_react_collections
+ 181894 15831944_jashliao_vc
+ 180961 Reese-D_my_emacs
+ 173781 AlpineInc_fullstack_umn_bootcamp
+ 167638 drupal_drupal
+ 158960 caolan_async
+ 148782 Garyxud_melodic-all
+
+
+#########################################################
+#older a2a
+#########################################################
 c=20 100 3000 30000
 zcat P2AFullT.nA2A.$c.s | perl connectExportVw.perl P2AFullT.nA2AP.$c 
 zcat P2AFullT.nA2AP.$c.versions | /home/audris/src/networkit/cluster $(zcat P2AFullT.nA2AP.$c.names|wc -l) | gzip > P2AFullT.nA2APu.$c.PLM
@@ -1248,6 +1415,7 @@ community?
 
 
 #Deblobing
+# uses fPnbnfb2PFullT$i.s
 time perl getType1.perl | gzip > fP2PStatsT.s
 time perl getType1.perl | gzip > fP2LPStatsT.s
 time perl getType1.perl | gzip > fP2SLPStatsT.s
